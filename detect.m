@@ -14,12 +14,20 @@ interval = i_params.test.interval;
 
 %% build a feature pyramid
 % fpTID = tic;
-if interval == 0
-    feats = {getHOXFeat(img, sqCellSz, HOGType)};
-    scales = 1;
+if numel(interval) == 1
+    if interval == 0
+        feats = {getHOXFeat(img, sqCellSz, HOGType)};
+        scales = 1;
+    else
+        [feats, scales] = featpyramid(img, sqCellSz, interval, @(img) getHOXFeat(img, sqCellSz, HOGType));
+    end
+    
 else
-    [feats, scales] = featpyramid(img, sqCellSz, interval, @(img) getHOXFeat(img, sqCellSz, HOGType));
+    featPyr_tmp = getFeatPyr( img, interval, @(img) getHOXFeat(img, sqCellSz, HOGType) );
+    scales = interval;
+    feats = {featPyr_tmp.feat};
 end
+
 
 featPyr = [];
 for sInd=1:numel(scales)
