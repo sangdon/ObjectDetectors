@@ -19,9 +19,6 @@ if interval == 0
     scales = 1;
 else
     [feats, scales] = featpyramid(img, sqCellSz, interval, @(img) getHOXFeat(img, sqCellSz, HOGType));
-    
-    feats = feats(1:2);
-    scales = scales(1:2);
 end
 
 featPyr = [];
