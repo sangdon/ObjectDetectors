@@ -1,7 +1,7 @@
 objectDetectors
 ===============
 
-Object detectors including a no-part model[1] (NPM) and deformable part model[2] (DPM)
+Object detectors including a no-part model (NPM)[1] and deformable part model (DPM)[2]
 
 
 Example
