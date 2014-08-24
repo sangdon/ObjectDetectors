@@ -36,7 +36,7 @@ sPnts = [Xs(:)'; Ys(:)'];
 %% check the measurement of each candidates
 bbs = zeros(size(sPnts, 2), getNParts(i_objMdl)*6+1);
 % parfor
-parfor (spInd=1:size(sPnts, 2), 4)
+parfor (spInd=1:size(sPnts, 2), 32)
 % for spInd=1:size(sPnts, 2)
 
     % get the score of the model

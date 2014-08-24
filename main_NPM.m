@@ -6,10 +6,11 @@
 % expID = 'exp_HObC_N0';
 expID = 'exp_Img';
 
+resultDir = '~/UPenn/Research/Data/OD/';
 
 % object names
 % objCls = 'inriaperson';
-objCls = 'Motorbikes';
+objCls = 'obj';
 % objCls = 'car_side';
 % objCls = 'window';
 
@@ -27,9 +28,13 @@ params.general.objCls = objCls;
 params.general.enableCaching = true;
 params.general.mdlType = 1; % 1: NPM, 2: DPM
 % libs
-params.lib.libDir = './libs';
+params.lib.libDir = {...
+    '~/UPenn/Research/VisionTools/libDPM5', ...
+    '~/UPenn/Research/VisionTools/libMatlabHelper', ...
+    '~/UPenn/Research/VisionTools/PVOC', ...
+    '~/UPenn/Research/VisionTools/libsvm'};
 % db
-params.db.rootDir = '/data/v50/sangdonp/objectDetection/DB/VOC_Caltech101'; % pascal format
+params.db.rootDir = '~/UPenn/Dropbox/Research/SocialObject/trainImg_kids_VOC'; % pascal format
 % params.db.rootDir = '/data/v50/sangdonp/objectDetection/DB/VOC_Paris'; % pascal format
 % params.db.rootDir = '/data/v50/sangdonp/objectDetection/DB/VOC_INRIA_person'; % pascal format
 params.db.annDir = [params.db.rootDir '/Annotations']; % pascal format
@@ -45,9 +50,9 @@ params.feat.HoG.SqCellSize = 4;
 % params.feat.HoG.maxMdlImgArea = 64*128; % 100*50;
 params.feat.HoG.mdlWH = [0 0]; 
 params.feat.HoG.maxMdlImgArea = 100*50;
-params.feat.HOG.type = 6; % 1: HOG_UOCTTI, 2: 1 wo CN, 3: wo AN, 4: HObC, 5: HObC_N0 ?: HOG_UOCTTI_vlfeat, 6: img
+params.feat.HOG.type = 1; % 1: HOG_UOCTTI, 2: 1 wo CN, 3: wo AN, 4: HObC, 5: HObC_N0 ?: HOG_UOCTTI_vlfeat, 6: img
 params.feat.partResRatio = 2;
-params.feat.cachingDir = ['/data/v50/sangdonp/objectDetection/' expID '/' objCls '/cacheDir'];
+params.feat.cachingDir = [resultDir expID '/' objCls '/cacheDir'];
 % training
 % params.training.C = 1e3; % 1e1: 0.563, 1e2: .5629, 1e3: .541(?), 1e6: .512
 params.training.C = 1e12; % SVM: 1e0: .630, 1e3: .667, 1e6: .667 
@@ -57,11 +62,11 @@ params.training.hardNegMining = 0;
 params.training.activelearning = 0;
 params.training.reflect = 0;
 params.training.exampleDuplication = 0;
-params.training.padSize = -8; %%%% for INRIA, -16 or 0 with imgPadSz=16
+params.training.padSize = 0; %%%% for INRIA, -16 or 0 with imgPadSz=16
 % test
 params.test.interval = 8;
 % params.test.scaleSearch = 0.2:0.1:0.4;
-params.test.bgContextSz = 0.8; % learningWH = realWH*(1+bgContextSz)
+params.test.bgContextSz = 0; % learningWH = realWH*(1+bgContextSz)
 params.test.scoreThres = -1000;
 params.test.topN = 50;
 params.test.nms = 1;
@@ -72,9 +77,9 @@ params.eval.minOverlap = 0.5;
 % debugging options
 params.debug.verbose = 2;
 % results
-params.results.cachingDir = ['/data/v50/sangdonp/objectDetection/' expID '/' objCls '/cacheDir']; 
-params.results.detFigureDir = ['/data/v50/sangdonp/objectDetection/' expID '/' objCls '/detFigures']; 
-params.results.intResDir = ['/data/v50/sangdonp/objectDetection/' expID '/' objCls '/intResDir']; 
+params.results.cachingDir = [resultDir expID '/' objCls '/cacheDir']; 
+params.results.detFigureDir = [resultDir expID '/' objCls '/detFigures']; 
+params.results.intResDir = [resultDir expID '/' objCls '/intResDir']; 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -112,7 +117,8 @@ if ~exist(params.results.intResDir, 'dir')
 end
 
 
-addpath(genpath(params.lib.libDir));
+cellfun(@addpath, params.lib.libDir);
+
 
 %% train
 if train_inria == 1

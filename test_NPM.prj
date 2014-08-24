@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment-project plugin="plugin.matlabcoder" plugin-version="R2013a">
-  <configuration target="target.matlab.coder" target-name="MEX, C, and C++ Code Generation" name="test_NPM" location="/data/insecure/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_NPM" file="/data/insecure/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_NPM/test_NPM.prj" build-checksum="2442508752">
+  <configuration target="target.matlab.coder" target-name="MEX, C, and C++ Code Generation" name="test_NPM" location="/home/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_github/objectDetectors/trunk" file="/home/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_github/objectDetectors/trunk/test_NPM.prj" build-checksum="610218778">
     <profile key="profile.mex">
       <param.MergeInstrumentationResults>false</param.MergeInstrumentationResults>
       <param.BuiltInstrumentedMex>false</param.BuiltInstrumentedMex>
@@ -284,7 +284,7 @@
     <param.outputfile>${PROJECT_ROOT}/slideWindow_mex.mexa64</param.outputfile>
     <param.version>R2012a</param.version>
     <param.HasECoderFeatures>false</param.HasECoderFeatures>
-    <param.mex.mainhtml />
+    <param.mex.mainhtml>/data/extern/sangdonp/objectDetection/HSDPM/test/html/index.html</param.mex.mainhtml>
     <param.grt.mainhtml>/data/extern/sangdonp/objectDetection/HSDPM/test_lib/html/index.html</param.grt.mainhtml>
     <param.CallGeneratedCodeFromTest>true</param.CallGeneratedCodeFromTest>
     <param.DefaultTestFile />
@@ -664,7 +664,7 @@
     <fileset.testbench />
     <fileset.package />
     <build-deliverables>
-      <file name="slideWindow_mex.mexa64" location="/data/insecure/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_NPM" optional="false">/data/insecure/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_NPM/slideWindow_mex.mexa64</file>
+      <file name="slideWindow_mex.mexa64" location="/home/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_github/objectDetectors/trunk" optional="false">/home/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_github/objectDetectors/trunk/slideWindow_mex.mexa64</file>
     </build-deliverables>
     <workflow />
     <matlab>

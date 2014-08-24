@@ -118,7 +118,7 @@ else
         if i_params.general.mdlType == 1
             %% NPM
 
-            pattern = getHOXFeat( curImg, i_params.feat.HoG.SqCellSize, i_params.feat.HoG.type );
+            pattern = getHOXFeat( curImg, i_params.feat.HoG.SqCellSize, i_params.feat.HOG.type );
             pattern = pattern(:);
             
 %             if i_params.feat.HOG.type == 5

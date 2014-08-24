@@ -5,7 +5,7 @@ img = i_img;
 objMdl = i_mdl.objMdl;
 i_params = i_mdl.params;
 sqCellSz = i_params.feat.HoG.SqCellSize;
-HOGType = i_params.feat.HoG.type;
+HOGType = i_params.feat.HOG.type;
 nmsFlag = i_params.test.nms;
 nmsOverlap = i_params.test.nmsOverlap;
 scoreThres = i_params.test.scoreThres;
@@ -14,20 +14,17 @@ interval = i_params.test.interval;
 
 %% build a feature pyramid
 % fpTID = tic;
-if numel(interval) == 1
-    if interval == 0
-        feats = {getHOXFeat(img, sqCellSz, HOGType)};
-        scales = 1;
-    else
-        [feats, scales] = featpyramid(img, sqCellSz, interval, @(img) getHOXFeat(img, sqCellSz, HOGType));
-    end
-    
+if interval == 0
+    feats = {getHOXFeat(img, sqCellSz, HOGType)};
+    scales = 1;
 else
-    featPyr_tmp = getFeatPyr( img, interval, @(img) getHOXFeat(img, sqCellSz, HOGType) );
-    scales = interval;
-    feats = {featPyr_tmp.feat};
+    [feats, scales] = featpyramid(img, sqCellSz, interval, @(img) getHOXFeat(img, sqCellSz, HOGType));
+    
+%     feats = feats(1:2);
+%     scales = scales(1:2);
+    
+    
 end
-
 
 featPyr = [];
 for sInd=1:numel(scales)
