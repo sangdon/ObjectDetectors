@@ -8,7 +8,7 @@ if i_params.general.enableCaching && exist(cacheFN, 'file')
 else
     %% supervised no-part model (NPM) or hyper-supervised DPM
     % train using easy-negatives
-    [mdl_easy, pasDB_tr] = train_DPM(i_params, i_objCls, i_pasDB);
+    [mdl_easy, pasDB_tr] = train_delta(i_params, i_objCls, i_pasDB);
     if i_params.training.hardNegMining == 1
         % test on the training set
         [pasDB_tr, pasDB_tr_det] = test(i_params, mdl_easy, pasDB_tr);
@@ -19,7 +19,7 @@ else
         newPasDB = convPasObjCls(newPasDB, i_objCls, [i_objCls '_neg']);
         newPasDB = mergePascalDB(pasDB_tr, newPasDB);
 
-        [objMdl, ~] = train_DPM(i_params, i_objCls, newPasDB);
+        [objMdl, ~] = train_delta(i_params, i_objCls, newPasDB);
     else
         objMdl = mdl_easy;
     end
@@ -48,7 +48,7 @@ end
 
 end
 
-function [o_model, o_pasDB] = train_DPM(i_params, i_objCls, i_pasDB)
+function [o_model, o_pasDB] = train_delta(i_params, i_objCls, i_pasDB)
 %% load db
 if isempty(i_pasDB)
     pasDB = addObjPading(loadPascalDB(i_params, i_params.db.trainingSet), i_objCls, i_params.training.padSize);
@@ -97,8 +97,6 @@ else
         showInterval = size(dbobjIndMap, 2)*0.1;
     end
     parfor dbobjInd=1:size(dbobjIndMap, 2)
-%     for dbobjInd=1:size(dbobjIndMap, 2)
-
         if i_params.debug.verbose >= 1 %&& mod(dbobjInd-1, showInterval) == 0
             fprintf('- extract features: %d/%d...', dbobjInd, size(dbobjIndMap, 2));
             feTID = tic;
@@ -118,7 +116,7 @@ else
         if i_params.general.mdlType == 1
             %% NPM
 
-            pattern = getHOXFeat( curImg, i_params.feat.HoG.SqCellSize, i_params.feat.HOG.type );
+            pattern = getHOXFeat( curImg, i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type );
             pattern = pattern(:);
             
 %             if i_params.feat.HOG.type == 5
@@ -190,7 +188,6 @@ end
 if i_params.general.mdlType == 1
     % train a linear SVM
 %     objMdl = trainSVMLight(i_params, patterns, labels, objMdl);
-%     objMdl = trainSSVM_NPM(i_params, patterns, labels, objMdl);
 %     objMdl = trainLinSVM(i_params, patterns, labels, objMdl);
     objMdl = trainLibSVM(i_params, patterns, labels, objMdl);
 else
@@ -425,7 +422,7 @@ nTrDB = numel(i_pasDB);
 objCls = i_objMdl.class;
 o_objMdl = i_objMdl;
 %% find max scale bbs
-if i_params.feat.HoG.maxMdlImgArea == 0
+if i_params.feat.HOX.maxMdlImgArea == 0
     areas_pos = zeros(nTrDB, 1);
     parfor dbInd=1:nTrDB  
         curPasRec = i_pasDB(dbInd);
@@ -445,7 +442,7 @@ if i_params.feat.HoG.maxMdlImgArea == 0
     end
     maxArea = max(areas_pos);
 else
-    maxArea = i_params.feat.HoG.maxMdlImgArea;
+    maxArea = i_params.feat.HOX.maxMdlImgArea;
 end
 
 %% estimate the size of model image
@@ -478,7 +475,7 @@ end
 % o_objMdl.wh = modelImgWH_pos(:);
 
 
-if all(i_params.feat.HoG.mdlWH == 0)
+if all(i_params.feat.HOX.mdlWH == 0)
     imgWHSums_pos = zeros(nTrDB, 2);
     nObjPerImg = zeros(nTrDB, 1);
     parfor dbInd=1:nTrDB
@@ -506,9 +503,17 @@ if all(i_params.feat.HoG.mdlWH == 0)
     modelImgWH_pos = ceil(sum(imgWHSums_pos, 1)/sum(nObjPerImg));
     
 else
-    modelImgWH_pos = ceil(i_params.feat.HoG.mdlWH);
+    modelImgWH_pos = ceil(i_params.feat.HOX.mdlWH);
 end
 o_objMdl.wh = modelImgWH_pos(:);
+
+% % resize for convenience
+% if mod(o_objMdl.wh(1), i_params.feat.HOX.SqCellSize) ~= 0
+%     o_objMdl.wh(1) = o_objMdl.wh(1) + (i_params.feat.HOX.SqCellSize - mod(o_objMdl.wh(1), i_params.feat.HOX.SqCellSize));
+% end
+% if mod(o_objMdl.wh(2), i_params.feat.HOX.SqCellSize) ~= 0
+%     o_objMdl.wh(2) = o_objMdl.wh(2) + (i_params.feat.HOX.SqCellSize - mod(o_objMdl.wh(2), i_params.feat.HOX.SqCellSize));
+% end
 
 if i_params.debug.verbose >= 1
     fprintf('- model WH: (%d, %d)\n', o_objMdl.wh(1), o_objMdl.wh(2));

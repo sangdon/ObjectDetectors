@@ -15,6 +15,8 @@ switch i_type
         o_feat = getHObCN0Feat(i_img, i_sqCellSize);
     case 6
         o_feat = getImgFeat(i_img, i_sqCellSize);
+    case 7
+        o_feat = getHOGCFeat( i_img, i_sqCellSize );
 end
 end
 

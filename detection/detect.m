@@ -4,8 +4,8 @@ function [ o_bbs, o_bbs_wbg ] = detect( i_mdl, i_img  )
 img = i_img;
 objMdl = i_mdl.objMdl;
 i_params = i_mdl.params;
-sqCellSz = i_params.feat.HoG.SqCellSize;
-HOGType = i_params.feat.HOG.type;
+sqCellSz = i_params.feat.HOX.SqCellSize;
+HOGType = i_params.feat.HOX.type;
 nmsFlag = i_params.test.nms;
 nmsOverlap = i_params.test.nmsOverlap;
 scoreThres = i_params.test.scoreThres;
@@ -19,11 +19,6 @@ if interval == 0
     scales = 1;
 else
     [feats, scales] = featpyramid(img, sqCellSz, interval, @(img) getHOXFeat(img, sqCellSz, HOGType));
-    
-%     feats = feats(1:2);
-%     scales = scales(1:2);
-    
-    
 end
 
 featPyr = [];
@@ -33,8 +28,6 @@ for sInd=1:numel(scales)
     curFeat.feat = padarray(feats{sInd}, [objMdl.wh_cc(2)-1 objMdl.wh_cc(1)-1 0]);
     featPyr = [featPyr; curFeat];
 end
-
-% fprintf('- building feature pyramid takes %s sec.\n', num2str(toc(fpTID)));
 
 % how about part? is there scale*2 things?
 

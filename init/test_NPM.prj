@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment-project plugin="plugin.matlabcoder" plugin-version="R2013a">
-  <configuration target="target.matlab.coder" target-name="MEX, C, and C++ Code Generation" name="test_NPM" location="/home/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_github/objectDetectors/trunk" file="/home/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_github/objectDetectors/trunk/test_NPM.prj" build-checksum="610218778">
+  <configuration target="target.matlab.coder" target-name="MEX, C, and C++ Code Generation" name="test_NPM" location="/home/sangdonp/UPenn/Research/OD/init" file="/home/sangdonp/UPenn/Research/OD/init/test_NPM.prj" build-checksum="610218778">
     <profile key="profile.mex">
       <param.MergeInstrumentationResults>false</param.MergeInstrumentationResults>
       <param.BuiltInstrumentedMex>false</param.BuiltInstrumentedMex>
@@ -10,7 +10,7 @@
       <param.BuildFolder>option.BuildFolder.Specified</param.BuildFolder>
       <param.SpecifiedBuildFolder>/data/extern/sangdonp/objectDetection/HSDPM/test</param.SpecifiedBuildFolder>
       <param.SearchPaths>
-        <item>./libs/libMatlabHelper</item>
+        <item>./../detection</item>
       </param.SearchPaths>
       <param.ResponsivenessChecks>true</param.ResponsivenessChecks>
       <param.ExtrinsicCalls>true</param.ExtrinsicCalls>
@@ -664,7 +664,7 @@
     <fileset.testbench />
     <fileset.package />
     <build-deliverables>
-      <file name="slideWindow_mex.mexa64" location="/home/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_github/objectDetectors/trunk" optional="false">/home/sangdonp/UPenn/Dropbox/Research/ActiveDPM/codes/codes_github/objectDetectors/trunk/slideWindow_mex.mexa64</file>
+      <file name="slideWindow_mex.mexa64" location="/home/sangdonp/UPenn/Research/OD/init" optional="false">/home/sangdonp/UPenn/Research/OD/init/slideWindow_mex.mexa64</file>
     </build-deliverables>
     <workflow />
     <matlab>

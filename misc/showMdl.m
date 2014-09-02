@@ -5,7 +5,7 @@ bs = 40;
 
 % draw a root filter
 w = reshape(i_objMdl.w_app, [i_objMdl.wh_cc(2), i_objMdl.wh_cc(1), numel(i_objMdl.w_app)/prod(i_objMdl.wh_cc)]);
-if i_params.feat.HOG.type < 4
+if i_params.feat.HOX.type < 4
     w = w(:,:,1:9);
     scale = max(max(w(:)),max(-w(:)));
     mdlImg = HOGpicture(w, bs) * 255/scale;

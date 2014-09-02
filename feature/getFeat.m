@@ -5,7 +5,7 @@ function [ o_feat, o_mdl ] = getFeat( i_params, i_imgSt, i_mdl, i_uvsc )
 o_mdl = updMdlUVSC(i_mdl, i_uvsc);
 
 %% get appearance feature
-appFeat = getAppFeat(i_params.feat.HoG.SqCellSize, i_params.feat.HOG.type, i_imgSt, o_mdl, []);
+appFeat = getAppFeat(i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type, i_imgSt, o_mdl, []);
 o_feat = appFeat(:);
 
 o_mdl.appFeatDim = numel(appFeat(:));

@@ -3,17 +3,23 @@ function [ o_feat ] = getHOGCFeat( i_img, i_sqCellSz )
 %   Detailed explanation goes here
 
 HOGFeat = getFeature_HoG_DPM5(i_img, i_sqCellSz);
-ColFeat = getColorFeat(i_img, i_sqCellSz, size(HOGFeat, 1), size(HOGFeat, 2));
-o_feat = cat(3, HOGFeat, ColFeat);
+HCFeat = getHCFeat_wrapper(i_img, i_sqCellSz);
+
+nrows = min(size(HOGFeat, 1), size(HCFeat, 1));
+ncols = min(size(HOGFeat, 2), size(HCFeat, 2));
+
+HOGFeat = HOGFeat(1:nrows, 1:ncols, :);
+HCFeat = HCFeat(1:nrows, 1:ncols, :);
+o_feat = cat(3, HOGFeat, HCFeat);
 end
 
-function [o_feat] = getFeature_HoG_DPM5( i_im, i_sqCellSize )
+function [o_feat] = getFeature_HoG_DPM5( i_im, i_sqCellSz )
 im = im2double(i_im);
-imhog = features_wN(im, i_sqCellSize);
+imhog = features_wN(im, i_sqCellSz);
 o_feat = double(imhog);
 end
 
-function [o_feat] = getColorFeat(i_im, i_sqCellSize, nrows, ncols)
+function [o_feat] = getHCFeat_wrapper(i_im, i_sqCellSz)
 
 nColBin = 8;
 
@@ -22,22 +28,7 @@ colorTransForm = makecform('srgb2lab');
 img_lab = applycform(im, colorTransForm);
 img_lab(:, :, 1) = img_lab(:, :, 1)/100;
 img_lab(:, :, 2) = (img_lab(:, :, 2)+128)/255;
-img_lab(:, :, 3) = (img_lab(:, :, 2)+128)/255;
+img_lab(:, :, 3) = (img_lab(:, :, 3)+128)/255;
 
-% nrows = floor(size(i_img, 1)/i_sqCellSz);
-% ncols = floor(size(i_img, 2)/i_sqCellSz);
-feat = mat2cell(img_lab, ...
-    [i_sqCellSize*ones(1, nrows-1) size(im, 1)-i_sqCellSize*(nrows-1)], ...
-    [i_sqCellSize*ones(1, ncols-1) size(im, 2)-i_sqCellSize*(ncols-1)], ...
-    [1 1 1]);
-for k=1:size(feat, 3)
-    for i=1:size(feat, 1)
-        for j=1:size(feat, 2)
-            feat{i, j, k} = histc(feat{i, j, k}(:), 0:1/nColBin:1); 
-            feat{i, j, k} = reshape(feat{i, j, k}, [1 1 numel(feat{i, j, k})]);
-            % color normalization????????????????????????????
-        end
-    end
-end
-o_feat = cell2mat(feat);
+o_feat = getHCFeat(img_lab, i_sqCellSz, nColBin);
 end

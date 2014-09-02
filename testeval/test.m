@@ -58,9 +58,7 @@ for dbInd=1:nTeDB
     % detect
     if i_params.test.searchType == 1
         [bbs, bbs_wbg] = detect(i_objMdl, img);
-%         [bbs, bbs_wbg] = detect_new(i_params, img, i_objMdl, imgIDStr);
-    else
-      
+    else      
         [bbs, bbs_wbg] = detect_SS_py(i_params, img, i_objMdl, imgIDStr);
     end
     
