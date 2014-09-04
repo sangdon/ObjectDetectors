@@ -1,14 +1,18 @@
-<deployment-project plugin="plugin.matlabcoder" plugin-version="R2014a_nu">
-  <configuration build-checksum="1048934765" file="/scratch/sangdonp/Research/OD/detection/slideWindow_conv.prj" location="/scratch/sangdonp/Research/OD/detection" name="slideWindow_conv" target="target.matlab.coder" target-name="MEX, C, and C++ Code Generation">
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment-project plugin="plugin.matlabcoder" plugin-version="R2013a">
+  <configuration target="target.matlab.coder" target-name="MEX, C, and C++ Code Generation" name="slideWindow" location="/home/sangdonp/UPenn/Research/OD/detection" file="/home/sangdonp/UPenn/Research/OD/detection/slideWindow.prj" build-checksum="1904496369">
     <profile key="profile.mex">
       <param.MergeInstrumentationResults>false</param.MergeInstrumentationResults>
       <param.BuiltInstrumentedMex>false</param.BuiltInstrumentedMex>
       <param.RanInstrumentedMex>false</param.RanInstrumentedMex>
-      <param.WorkingFolder>option.WorkingFolder.Project</param.WorkingFolder>
+      <param.WorkingFolder>option.WorkingFolder.Specified</param.WorkingFolder>
       <param.SpecifiedWorkingFolder>/data/extern/sangdonp/objectDetection/HSDPM/test</param.SpecifiedWorkingFolder>
-      <param.BuildFolder>option.BuildFolder.Project</param.BuildFolder>
+      <param.BuildFolder>option.BuildFolder.Specified</param.BuildFolder>
       <param.SpecifiedBuildFolder>/data/extern/sangdonp/objectDetection/HSDPM/test</param.SpecifiedBuildFolder>
-      <param.SearchPaths />
+      <param.SearchPaths>
+        <item>./../misc</item>
+        <item>./../feature</item>
+      </param.SearchPaths>
       <param.ResponsivenessChecks>true</param.ResponsivenessChecks>
       <param.ExtrinsicCalls>true</param.ExtrinsicCalls>
       <param.IntegrityChecks>true</param.IntegrityChecks>
@@ -37,7 +41,6 @@
       <param.ProposeFixedPointDataTypes>true</param.ProposeFixedPointDataTypes>
       <param.mex.GenCodeOnly>false</param.mex.GenCodeOnly>
       <param.ConstantFoldingTimeout>40000</param.ConstantFoldingTimeout>
-      <param.RecursionLimit>100</param.RecursionLimit>
       <param.TargetLang>option.TargetLang.C</param.TargetLang>
       <param.EchoExpressions>true</param.EchoExpressions>
       <param.InlineThreshold>10</param.InlineThreshold>
@@ -52,9 +55,6 @@
         <param.MergeInstrumentationResults />
         <param.BuiltInstrumentedMex />
         <param.RanInstrumentedMex />
-        <param.WorkingFolder />
-        <param.BuildFolder />
-        <param.SearchPaths />
         <param.ResponsivenessChecks />
         <param.ExtrinsicCalls />
         <param.IntegrityChecks />
@@ -75,7 +75,6 @@
         <param.ProposeFixedPointDataTypes />
         <param.mex.GenCodeOnly />
         <param.ConstantFoldingTimeout />
-        <param.RecursionLimit />
         <param.TargetLang />
         <param.EchoExpressions />
         <param.InlineThreshold />
@@ -107,10 +106,8 @@
       <param.MultiInstanceCode>false</param.MultiInstanceCode>
       <param.FilePartitionMethod>option.FilePartitionMethod.MapMFileToCFile</param.FilePartitionMethod>
       <param.GenerateComments>true</param.GenerateComments>
-      <param.CommentStyle>option.CommentStyle.Auto</param.CommentStyle>
       <param.MATLABSourceComments>false</param.MATLABSourceComments>
-      <param.MATLABFcnDesc>true</param.MATLABFcnDesc>
-      <param.DataTypeReplacement>option.DataTypeReplacement.CBuiltIn</param.DataTypeReplacement>
+      <param.MATLABFcnDesc>false</param.MATLABFcnDesc>
       <param.ConvertIfToSwitch>false</param.ConvertIfToSwitch>
       <param.PreserveExternInFcnDecls>true</param.PreserveExternInFcnDecls>
       <param.ParenthesesLevel>option.ParenthesesLevel.Nominal</param.ParenthesesLevel>
@@ -122,7 +119,6 @@
       <param.CustomSymbolStrTmpVar>$M$N</param.CustomSymbolStrTmpVar>
       <param.CustomSymbolStrMacro>$M$N</param.CustomSymbolStrMacro>
       <param.CustomSymbolStrEMXArray>emxArray_$M$N</param.CustomSymbolStrEMXArray>
-      <param.CustomSymbolStrEMXArrayFcn>emx$M$N</param.CustomSymbolStrEMXArrayFcn>
       <param.ReservedNameArray />
       <param.EnableScreener>true</param.EnableScreener>
       <param.Verbose>false</param.Verbose>
@@ -138,45 +134,37 @@
       <param.CustomSource />
       <param.CustomLibrary />
       <param.PostCodeGenCommand />
-      <param.TargetLangStandard>C89/C90 (ANSI)</param.TargetLangStandard>
-      <param.CodeReplacementLibrary>None</param.CodeReplacementLibrary>
-      <param.DeprecatedCRLFlag>false</param.DeprecatedCRLFlag>
+      <param.CodeReplacementLibrary>C89/C90 (ANSI)</param.CodeReplacementLibrary>
       <param.SameHardware>true</param.SameHardware>
       <param.HardwareVendor.Production>Generic</param.HardwareVendor.Production>
       <param.HardwareType.Production>MATLAB Host Computer</param.HardwareType.Production>
-      <param.HWDeviceType.Production>Generic-&gt;MATLAB Host Computer</param.HWDeviceType.Production>
       <var.instance.enabled.Production>true</var.instance.enabled.Production>
       <param.HardwareSizeChar.Production>8</param.HardwareSizeChar.Production>
       <param.HardwareSizeShort.Production>16</param.HardwareSizeShort.Production>
       <param.HardwareSizeInt.Production>32</param.HardwareSizeInt.Production>
       <param.HardwareSizeLong.Production>64</param.HardwareSizeLong.Production>
-      <param.HardwareSizeLongLong.Production>64</param.HardwareSizeLongLong.Production>
       <param.HardwareSizeFloat.Production>32</param.HardwareSizeFloat.Production>
       <param.HardwareSizeDouble.Production>64</param.HardwareSizeDouble.Production>
       <param.HardwareSizeWord.Production>64</param.HardwareSizeWord.Production>
       <param.HardwareSizePointer.Production>64</param.HardwareSizePointer.Production>
       <param.HardwareEndianness.Production>option.HardwareEndianness.Little</param.HardwareEndianness.Production>
       <param.HardwareArithmeticRightShift.Production>true</param.HardwareArithmeticRightShift.Production>
-      <param.HardwareLongLongMode.Production>false</param.HardwareLongLongMode.Production>
       <param.HardwareAtomicIntegerSize.Production>option.HardwareAtomicIntegerSize.Char</param.HardwareAtomicIntegerSize.Production>
       <param.HardwareAtomicFloatSize.Production>option.HardwareAtomicFloatSize.None</param.HardwareAtomicFloatSize.Production>
       <param.HardwareDivisionRounding.Production>option.HardwareDivisionRounding.Zero</param.HardwareDivisionRounding.Production>
       <param.HardwareVendor.Target>Generic</param.HardwareVendor.Target>
       <param.HardwareType.Target>MATLAB Host Computer</param.HardwareType.Target>
-      <param.HWDeviceType.Target>Generic-&gt;MATLAB Host Computer</param.HWDeviceType.Target>
       <var.instance.enabled.Target>false</var.instance.enabled.Target>
       <param.HardwareSizeChar.Target>8</param.HardwareSizeChar.Target>
       <param.HardwareSizeShort.Target>16</param.HardwareSizeShort.Target>
       <param.HardwareSizeInt.Target>32</param.HardwareSizeInt.Target>
       <param.HardwareSizeLong.Target>64</param.HardwareSizeLong.Target>
-      <param.HardwareSizeLongLong.Target>64</param.HardwareSizeLongLong.Target>
       <param.HardwareSizeFloat.Target>32</param.HardwareSizeFloat.Target>
       <param.HardwareSizeDouble.Target>64</param.HardwareSizeDouble.Target>
       <param.HardwareSizeWord.Target>64</param.HardwareSizeWord.Target>
       <param.HardwareSizePointer.Target>64</param.HardwareSizePointer.Target>
       <param.HardwareEndianness.Target>option.HardwareEndianness.Little</param.HardwareEndianness.Target>
       <param.HardwareArithmeticRightShift.Target>true</param.HardwareArithmeticRightShift.Target>
-      <param.HardwareLongLongMode.Target>false</param.HardwareLongLongMode.Target>
       <param.HardwareAtomicIntegerSize.Target>option.HardwareAtomicIntegerSize.Char</param.HardwareAtomicIntegerSize.Target>
       <param.HardwareAtomicFloatSize.Target>option.HardwareAtomicFloatSize.None</param.HardwareAtomicFloatSize.Target>
       <param.HardwareDivisionRounding.Target>option.HardwareDivisionRounding.Zero</param.HardwareDivisionRounding.Target>
@@ -184,7 +172,6 @@
       <param.BuildConfiguration>Faster Builds</param.BuildConfiguration>
       <param.CustomToolchainOptions />
       <param.ConstantFoldingTimeout>40000</param.ConstantFoldingTimeout>
-      <param.RecursionLimit>100</param.RecursionLimit>
       <param.IncludeTerminateFcn>true</param.IncludeTerminateFcn>
       <param.TargetLang>option.TargetLang.C</param.TargetLang>
       <param.CCompilerOptimization>option.CCompilerOptimization.Off</param.CCompilerOptimization>
@@ -199,10 +186,9 @@
       <param.InlineStackLimit>4000</param.InlineStackLimit>
       <param.EnableMemcpy>true</param.EnableMemcpy>
       <param.MemcpyThreshold>64</param.MemcpyThreshold>
-      <param.EnableOpenMP>true</param.EnableOpenMP>
       <param.InitFltsAndDblsToZero>true</param.InitFltsAndDblsToZero>
       <param.PassStructByReference>true</param.PassStructByReference>
-      <param.UseECoderFeatures>true</param.UseECoderFeatures>
+      <param.UseECoderFeatures>false</param.UseECoderFeatures>
       <unset>
         <param.grt.GenCodeOnly />
         <param.SaturateOnIntegerOverflow />
@@ -215,10 +201,8 @@
         <param.MultiInstanceCode />
         <param.FilePartitionMethod />
         <param.GenerateComments />
-        <param.CommentStyle />
         <param.MATLABSourceComments />
         <param.MATLABFcnDesc />
-        <param.DataTypeReplacement />
         <param.ConvertIfToSwitch />
         <param.PreserveExternInFcnDecls />
         <param.ParenthesesLevel />
@@ -230,7 +214,6 @@
         <param.CustomSymbolStrTmpVar />
         <param.CustomSymbolStrMacro />
         <param.CustomSymbolStrEMXArray />
-        <param.CustomSymbolStrEMXArrayFcn />
         <param.ReservedNameArray />
         <param.EnableScreener />
         <param.Verbose />
@@ -247,41 +230,33 @@
         <param.CustomLibrary />
         <param.PostCodeGenCommand />
         <param.CodeReplacementLibrary />
-        <param.DeprecatedCRLFlag />
         <param.SameHardware />
         <param.HardwareVendor.Production />
         <param.HardwareType.Production />
-        <param.HWDeviceType.Production />
         <var.instance.enabled.Production />
         <param.HardwareSizeChar.Production />
         <param.HardwareSizeShort.Production />
         <param.HardwareSizeInt.Production />
-        <param.HardwareSizeLongLong.Production />
         <param.HardwareSizeFloat.Production />
         <param.HardwareSizeDouble.Production />
         <param.HardwareEndianness.Production />
-        <param.HardwareLongLongMode.Production />
         <param.HardwareAtomicIntegerSize.Production />
         <param.HardwareAtomicFloatSize.Production />
         <param.HardwareVendor.Target />
         <param.HardwareType.Target />
-        <param.HWDeviceType.Target />
         <var.instance.enabled.Target />
         <param.HardwareSizeChar.Target />
         <param.HardwareSizeShort.Target />
         <param.HardwareSizeInt.Target />
-        <param.HardwareSizeLongLong.Target />
         <param.HardwareSizeFloat.Target />
         <param.HardwareSizeDouble.Target />
         <param.HardwareEndianness.Target />
-        <param.HardwareLongLongMode.Target />
         <param.HardwareAtomicIntegerSize.Target />
         <param.HardwareAtomicFloatSize.Target />
         <param.Toolchain />
         <param.BuildConfiguration />
         <param.CustomToolchainOptions />
         <param.ConstantFoldingTimeout />
-        <param.RecursionLimit />
         <param.IncludeTerminateFcn />
         <param.TargetLang />
         <param.CCompilerOptimization />
@@ -296,35 +271,31 @@
         <param.InlineStackLimit />
         <param.EnableMemcpy />
         <param.MemcpyThreshold />
-        <param.EnableOpenMP />
         <param.InitFltsAndDblsToZero />
         <param.PassStructByReference />
         <param.UseECoderFeatures />
       </unset>
     </profile>
-    <param.outputfile>${PROJECT_ROOT}/slideWindow_conv_mex.mexa64</param.outputfile>
+    <param.outputfile>${PROJECT_ROOT}/slideWindow_mex.mexa64</param.outputfile>
     <param.version>R2012a</param.version>
-    <param.HasECoderFeatures>true</param.HasECoderFeatures>
+    <param.HasECoderFeatures>false</param.HasECoderFeatures>
     <param.mex.mainhtml />
     <param.grt.mainhtml>/data/extern/sangdonp/objectDetection/HSDPM/test_lib/html/index.html</param.grt.mainhtml>
     <param.CallGeneratedCodeFromTest>true</param.CallGeneratedCodeFromTest>
-    <param.VerificationMode>option.VerificationMode.None</param.VerificationMode>
-    <param.SILDebugging>false</param.SILDebugging>
     <param.DefaultTestFile />
     <param.AutoInferDefaultFile />
     <param.AutoInferUseVariableSize>false</param.AutoInferUseVariableSize>
     <param.AutoInferUseUnboundedSize>false</param.AutoInferUseUnboundedSize>
     <param.AutoInferVariableSizeThreshold>1024</param.AutoInferVariableSizeThreshold>
     <param.AutoInferUnboundedSizeThreshold>2048</param.AutoInferUnboundedSizeThreshold>
-    <param.AnnotationChecksum>2965145275</param.AnnotationChecksum>
-    <param.mex.outputfile>slideWindow_conv_mex</param.mex.outputfile>
-    <param.grt.outputfile>slideWindow_conv</param.grt.outputfile>
+    <param.mex.outputfile>slideWindow_mex</param.mex.outputfile>
+    <param.grt.outputfile>slideWindow</param.grt.outputfile>
     <param.artifact>option.target.artifact.mex</param.artifact>
     <param.FixedPointTypeProposalMode>option.FixedPointTypeProposalMode.ProposeFractionLengths</param.FixedPointTypeProposalMode>
     <param.DefaultProposedFixedPointType>numerictype([],16,12)</param.DefaultProposedFixedPointType>
     <param.MinMaxSafetyMargin>0</param.MinMaxSafetyMargin>
     <param.OptimizeWholeNumbers>true</param.OptimizeWholeNumbers>
-    <param.ContainerTypes>false</param.ContainerTypes>
+    <param.LogHistogramForInstrumentedMEX>true</param.LogHistogramForInstrumentedMEX>
     <param.LaunchInstrumentationReport>false</param.LaunchInstrumentationReport>
     <param.OpenInstrumentationReportInBrowser>false</param.OpenInstrumentationReportInBrowser>
     <param.CreatePrintableInstrumentationReport>false</param.CreatePrintableInstrumentationReport>
@@ -343,9 +314,7 @@
     <param.StaticAnalysisTimeout />
     <param.StaticAnalysisGlobalRangesOnly>false</param.StaticAnalysisGlobalRangesOnly>
     <param.LogAllIOValues>false</param.LogAllIOValues>
-    <param.DetectOverflows>false</param.DetectOverflows>
     <param.LogHistogram>false</param.LogHistogram>
-    <param.ShowCoverage>true</param.ShowCoverage>
     <param.ExcludedFixedPointVerificationFiles />
     <param.ExcludedFixedPointSimulationFiles />
     <param.InstrumentedBuildChecksum />
@@ -355,16 +324,13 @@
     <param.FixedPointSourceCodeChecksum />
     <param.FixedPointFunctionReplacements />
     <param.OptimizeWholeNumbers>true</param.OptimizeWholeNumbers>
-    <param.GeneratedFixedPointFileSuffix>_fixpt</param.GeneratedFixedPointFileSuffix>
-    <param.PlotFunction />
+    <param.GeneratedFixedPointFileSuffix>_FixPt</param.GeneratedFixedPointFileSuffix>
     <param.DefaultFixedPointSignedness>option.DefaultFixedPointSignedness.Automatic</param.DefaultFixedPointSignedness>
     <unset>
       <param.outputfile />
       <param.version />
       <param.HasECoderFeatures />
       <param.CallGeneratedCodeFromTest />
-      <param.VerificationMode />
-      <param.SILDebugging />
       <param.DefaultTestFile />
       <param.AutoInferDefaultFile />
       <param.AutoInferUseVariableSize />
@@ -378,7 +344,7 @@
       <param.DefaultProposedFixedPointType />
       <param.MinMaxSafetyMargin />
       <param.OptimizeWholeNumbers />
-      <param.ContainerTypes />
+      <param.LogHistogramForInstrumentedMEX />
       <param.LaunchInstrumentationReport />
       <param.OpenInstrumentationReportInBrowser />
       <param.CreatePrintableInstrumentationReport />
@@ -397,9 +363,7 @@
       <param.StaticAnalysisTimeout />
       <param.StaticAnalysisGlobalRangesOnly />
       <param.LogAllIOValues />
-      <param.DetectOverflows />
       <param.LogHistogram />
-      <param.ShowCoverage />
       <param.ExcludedFixedPointVerificationFiles />
       <param.ExcludedFixedPointSimulationFiles />
       <param.InstrumentedBuildChecksum />
@@ -409,32 +373,471 @@
       <param.FixedPointSourceCodeChecksum />
       <param.FixedPointFunctionReplacements />
       <param.GeneratedFixedPointFileSuffix />
-      <param.PlotFunction />
       <param.DefaultFixedPointSignedness />
     </unset>
     <fileset.entrypoints>
-      <file custom-data-expanded="true" value="${PROJECT_ROOT}/slideWindow_conv.m">
-        <Inputs fileName="slideWindow_conv.m" functionName="slideWindow_conv">
-          <Input Name="i_mdlMat">
-            <Class>double</Class>
-            <Size>:inf x :inf x :inf</Size>
-            <Value />
-            <InitialValue />
-            <UserDefined>true</UserDefined>
-            <Complex>false</Complex>
-          </Input>
-          <Input Name="i_inMat">
-            <Class>double</Class>
-            <Size>:inf x :inf x :inf</Size>
-            <Value />
-            <InitialValue />
-            <UserDefined>true</UserDefined>
-            <Complex>false</Complex>
-          </Input>
-          <Input Name="i_scoreThres">
+      <file value="${PROJECT_ROOT}/slideWindow.m" custom-data-expanded="true">
+        <Inputs fileName="slideWindow.m" functionName="slideWindow">
+          <Input Name="i_sqCellSize">
             <Class>double</Class>
             <Size>1 x 1</Size>
-            <Value />
+            <Value>i_sqCellSize</Value>
+            <InitialValue />
+            <UserDefined>true</UserDefined>
+            <Complex>false</Complex>
+          </Input>
+          <Input Name="i_HOXType">
+            <Class>double</Class>
+            <Size>1 x 1</Size>
+            <Value>i_HOXType</Value>
+            <InitialValue />
+            <UserDefined>true</UserDefined>
+            <Complex>false</Complex>
+          </Input>
+          <Input Name="i_imgSt">
+            <Class>struct</Class>
+            <Size>1 x 1</Size>
+            <Value>i_imgSt</Value>
+            <InitialValue />
+            <UserDefined>true</UserDefined>
+            <TypeName />
+            <Extern>false</Extern>
+            <HeaderFile />
+            <Alignment>0</Alignment>
+            <Field Name="img">
+              <Class>double</Class>
+              <Size>:inf x :inf x :inf</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="featPyr">
+              <Class>struct</Class>
+              <Size>:inf x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <TypeName />
+              <Extern>false</Extern>
+              <HeaderFile />
+              <Alignment>0</Alignment>
+              <Field Name="scale">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="feat">
+                <Class>double</Class>
+                <Size>:inf x :inf x :inf</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+            </Field>
+          </Input>
+          <Input Name="i_objMdl">
+            <Class>struct</Class>
+            <Size>1 x 1</Size>
+            <Value>i_objMdl</Value>
+            <InitialValue />
+            <UserDefined>true</UserDefined>
+            <TypeName />
+            <Extern>false</Extern>
+            <HeaderFile />
+            <Alignment>0</Alignment>
+            <Field Name="class">
+              <Class>char</Class>
+              <Size>1 x :inf</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+            </Field>
+            <Field Name="bndbox">
+              <Class>struct</Class>
+              <Size>1 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <TypeName />
+              <Extern>false</Extern>
+              <HeaderFile />
+              <Alignment>0</Alignment>
+              <Field Name="xmin">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="xmax">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="ymin">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="ymax">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+            </Field>
+            <Field Name="appFeatDim">
+              <Class>double</Class>
+              <Size>1 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="defFeatDim">
+              <Class>double</Class>
+              <Size>1 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="c">
+              <Class>double</Class>
+              <Size>1 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="uv">
+              <Class>double</Class>
+              <Size>2 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="uv_cc">
+              <Class>double</Class>
+              <Size>2 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="wh">
+              <Class>double</Class>
+              <Size>2 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="wh_cc">
+              <Class>double</Class>
+              <Size>2 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="ds">
+              <Class>double</Class>
+              <Size>1 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="s">
+              <Class>double</Class>
+              <Size>1 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="dudv">
+              <Class>double</Class>
+              <Size>2 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="dudv_cc">
+              <Class>double</Class>
+              <Size>2 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="appScore">
+              <Class>double</Class>
+              <Size>1 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="defScore">
+              <Class>double</Class>
+              <Size>1 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="parts">
+              <Class>struct</Class>
+              <Size>:inf x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <TypeName />
+              <Extern>false</Extern>
+              <HeaderFile />
+              <Alignment>0</Alignment>
+              <Field Name="class">
+                <Class>char</Class>
+                <Size>1 x :inf</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+              </Field>
+              <Field Name="bndbox">
+                <Class>struct</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <TypeName />
+                <Extern>false</Extern>
+                <HeaderFile />
+                <Alignment>0</Alignment>
+                <Field Name="xmin">
+                  <Class>double</Class>
+                  <Size>1 x 1</Size>
+                  <Value />
+                  <InitialValue />
+                  <UserDefined>true</UserDefined>
+                  <Complex>false</Complex>
+                </Field>
+                <Field Name="xmax">
+                  <Class>double</Class>
+                  <Size>1 x 1</Size>
+                  <Value />
+                  <InitialValue />
+                  <UserDefined>true</UserDefined>
+                  <Complex>false</Complex>
+                </Field>
+                <Field Name="ymin">
+                  <Class>double</Class>
+                  <Size>1 x 1</Size>
+                  <Value />
+                  <InitialValue />
+                  <UserDefined>true</UserDefined>
+                  <Complex>false</Complex>
+                </Field>
+                <Field Name="ymax">
+                  <Class>double</Class>
+                  <Size>1 x 1</Size>
+                  <Value />
+                  <InitialValue />
+                  <UserDefined>true</UserDefined>
+                  <Complex>false</Complex>
+                </Field>
+              </Field>
+              <Field Name="appFeatDim">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="defFeatDim">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="c">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="uv">
+                <Class>double</Class>
+                <Size>2 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="uv_cc">
+                <Class>double</Class>
+                <Size>2 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="wh">
+                <Class>double</Class>
+                <Size>2 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="wh_cc">
+                <Class>double</Class>
+                <Size>2 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="ds">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="s">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="dudv">
+                <Class>double</Class>
+                <Size>2 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="dudv_cc">
+                <Class>double</Class>
+                <Size>2 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="appScore">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="defScore">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="parts">
+                <Class>double</Class>
+                <Size>0 x 0</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="w_app">
+                <Class>double</Class>
+                <Size>:inf x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="w_def">
+                <Class>double</Class>
+                <Size>4 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+              <Field Name="w_b">
+                <Class>double</Class>
+                <Size>1 x 1</Size>
+                <Value />
+                <InitialValue />
+                <UserDefined>true</UserDefined>
+                <Complex>false</Complex>
+              </Field>
+            </Field>
+            <Field Name="map_IDTI">
+              <Class>double</Class>
+              <Size>:inf x :inf</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="featDim">
+              <Class>double</Class>
+              <Size>1 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="w_app">
+              <Class>double</Class>
+              <Size>:inf x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="w_b">
+              <Class>double</Class>
+              <Size>1 x 1</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+          </Input>
+          <Input Name="i_valRectProp_cc">
+            <Class>double</Class>
+            <Size>4 x 1</Size>
+            <Value>i_valRectProp_cc</Value>
             <InitialValue />
             <UserDefined>true</UserDefined>
             <Complex>false</Complex>
@@ -445,31 +848,14 @@
     <fileset.testbench />
     <fileset.package />
     <build-deliverables>
-      <file location="/scratch/sangdonp/Research/OD/detection" name="slideWindow_conv_mex.mexa64" optional="false">/scratch/sangdonp/Research/OD/detection/slideWindow_conv_mex.mexa64</file>
+      <file name="slideWindow_mex.mexa64" location="/home/sangdonp/UPenn/Research/OD/detection" optional="false">/home/sangdonp/UPenn/Research/OD/detection/slideWindow_mex.mexa64</file>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>/usr/local/Matlab/R2014a</root>
+      <root>/usr/local/MATLAB/R2013a</root>
       <toolboxes>
         <toolbox name="fixedpoint" />
-        <toolbox name="embeddedcoder" />
-        <toolbox name="matlabcoder" />
       </toolboxes>
-      <toolbox>
-        <fixedpoint>
-          <enabled>true</enabled>
-        </fixedpoint>
-      </toolbox>
-      <toolbox>
-        <embeddedcoder>
-          <enabled>true</enabled>
-        </embeddedcoder>
-      </toolbox>
-      <toolbox>
-        <matlabcoder>
-          <enabled>true</enabled>
-        </matlabcoder>
-      </toolbox>
     </matlab>
     <platform>
       <unix>true</unix>
@@ -480,7 +866,7 @@
       <vista>false</vista>
       <linux>true</linux>
       <solaris>false</solaris>
-      <osver>3.11.10-21-desktop</osver>
+      <osver>3.7.10-1.16-desktop</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>glnxa64</arch>
@@ -488,3 +874,4 @@
     </platform>
   </configuration>
 </deployment-project>
+
