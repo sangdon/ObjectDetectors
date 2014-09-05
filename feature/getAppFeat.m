@@ -4,26 +4,27 @@ function [ o_feat ] = getAppFeat( i_sqCellSize, i_type, i_imgSt, i_mdl, i_uvsc )
 
 i_mdl = updMdlUVSC( i_mdl, i_uvsc );
 
-if i_mdl.c == 0
-    o_feat = zeros([i_mdl.wh_cc(2) i_mdl.wh_cc(1) i_mdl.appFeatDim/prod(i_mdl.wh_cc)]);
-    return;
-end
+% if i_mdl.c == 0
+%     o_feat = zeros([i_mdl.wh_cc(2) i_mdl.wh_cc(1) i_mdl.appFeatDim/prod(i_mdl.wh_cc)]);
+%     return;
+% end
 
 if isempty(i_imgSt.featPyr)
     %% don't have precomputed features
     img = i_imgSt.img;
-    rect = [i_mdl.uv' i_mdl.wh']; % in scale space
-%     img = imresize(crop3dmat(img, rect), i_mdl.s);
-    img = imresize(imcrop(img, rect), i_mdl.s);
+    
+    rect = [i_mdl.uv' i_mdl.wh'-1]; % in scale space
+    img = imcrop(img, rect);
+%     img = imresize(imcrop(img, rect), i_mdl.s);
     
     o_feat = getHOXFeat(img, i_sqCellSize, i_type);
 else
     %% has precomputed features
     level = findFeatPyrLevel(i_imgSt.featPyr, i_mdl.s);
-    if level == 0
-        o_feat = zeros([i_mdl.wh_cc(2) i_mdl.wh_cc(1) i_mdl.appFeatDim/prod(i_mdl.wh_cc)]);
-        return;
-    end
+%     if level == 0
+%         o_feat = zeros([i_mdl.wh_cc(2) i_mdl.wh_cc(1) i_mdl.appFeatDim/prod(i_mdl.wh_cc)]);
+%         return;
+%     end
     feat = i_imgSt.featPyr(level).feat;
     
 % %     rect = ic2cc([i_mdl.uv' i_mdl.wh']*i_mdl.s, i_params.feat.HoG.SqCellSize, i_mdl.wh_cc);

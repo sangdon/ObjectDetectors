@@ -5,7 +5,8 @@ function [ o_feat ] = getHOGFeat( i_img, i_sqCellSize, i_type )
 % HOG
 switch i_type
     case 1
-        o_feat = getFeature_HoG_DPM5(i_img, i_sqCellSize);
+%         o_feat = getFeature_HoG_DPM5(i_img, i_sqCellSize);
+        o_feat = getFeature_HoG_vlfeat(i_img, i_sqCellSize);
     case 2
         o_feat = getFeature_HoG_DPM5_woCN(i_img, i_sqCellSize);
     case 3
