@@ -30,15 +30,17 @@ end
 
 %% return
 o_objMdl = i_objMdl;
-o_objMdl = updMdlW(o_objMdl, model_ssvm.w);
+o_objMdl = updMdlW(i_params.general.mdlType, o_objMdl, model_ssvm.w);
 
 
 end
 
 function [o_params] = squeezeParams(i_params)
 o_params = [];
-o_params.feat.HoG.SqCellSize = i_params.feat.HoG.SqCellSize;
-o_params.feat.HoG.type = i_params.feat.HoG.type;
+o_params.general.mdlType = i_params.general.mdlType;
+o_params.feat.HOX.SqCellSize = i_params.feat.HOX.SqCellSize;
+o_params.feat.HOX.type = i_params.feat.HOX.type;
+o_params.feat.HOX.partResRatio = i_params.feat.HOX.partResRatio;
 end
 
 function delta = lossCB(param, yi, ybar)
@@ -50,6 +52,10 @@ function delta = lossCB(param, yi, ybar)
 %     end
 end
 
+function [o_loss] = lossFnc(yi, y)
+o_loss = double(yi.c ~= y.c);
+end
+
 function psi = featureCB(param, x, y)
 
     psi = sparse(getFeat(param.globalParams, x, y, [1; 1; 1; y.c]));
@@ -58,6 +64,38 @@ function psi = featureCB(param, x, y)
 %         fprintf('w = psi([%8.3f,%8.3f], %3d) = [%8.3f, %8.3f]\n', ...
 %             x, y, full(psi(1)), full(psi(2))) ;
 %     end
+end
+
+
+function yhat = constraintCBFnc(param, model, xi, yi)
+% slack resaling: argmax_y delta(yi, y) (1 + <psi(x,y), w> - <psi(x,yi), w>)
+% margin rescaling: argmax_y delta(yi, y) + <psi(x,y), w>
+
+globalParams = param.globalParams;
+
+%% margin rescaling
+
+% update w
+y = updMdlW(globalParams.general.mdlType, yi, model.w);
+
+% find yhat
+maxScore = -inf;
+maxPartMdl = y; % initialize
+for c=[0 1]
+    y_c = updMdlUVSC(y, [1; 1; 1; c]);
+    
+    loss = lossFnc(y, y_c);
+%     [meas, y_c_opt] = measPart( globalParams.feat.HOX.SqCellSize, globalParams.feat.HOX.type, xi, y_c, [1; 1; 1; c]);
+    [meas, y_c_opt] = measPart_DT( xi, y_c, [1; 1; 1; c]);
+        
+    score = meas + loss; % wierd but correct based on svm_struct_api.c
+    if maxScore < score
+        maxScore = score;
+        maxPartMdl = y_c_opt;
+    end
+end
+yhat = maxPartMdl;
+
 end
 
 

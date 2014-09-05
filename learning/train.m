@@ -60,7 +60,7 @@ else
 end
 
 % warning('small number of training');
-% pasDB = pasDB([1:100 3001:3010] );
+% pasDB = pasDB(1:10);
 oriPasDB = pasDB;
 
 
@@ -71,6 +71,7 @@ oriPasDB = pasDB;
 [pasDB, objMdl] = transObjsToMdlSpace(i_params, pasDB, objMdl);
 
 % obtain hyper-supervision
+% warning('no part annotation');
 [pasDB, objMdl] = getPartAnnotations(i_params, pasDB, objMdl);
 
 % convert a tree data structure into a array data structure
@@ -96,7 +97,9 @@ else
         fprintf('- extracting features for %d examples\n', size(dbobjIndMap, 2));
         showInterval = size(dbobjIndMap, 2)*0.1;
     end
-    parfor dbobjInd=1:size(dbobjIndMap, 2)
+    
+%     parfor dbobjInd=1:size(dbobjIndMap, 2)
+    for dbobjInd=1:size(dbobjIndMap, 2)
         if i_params.debug.verbose >= 1 %&& mod(dbobjInd-1, showInterval) == 0
             fprintf('- extract features: %d/%d...', dbobjInd, size(dbobjIndMap, 2));
             feTID = tic;
@@ -113,34 +116,37 @@ else
             objMdl.wh, ...
             pasDB(dbInd).objects(oInd).scale_psi, pasDB(dbInd).objects(oInd).resizedBB_psi);
 
-        if i_params.general.mdlType == 1
-            %% NPM
+        if i_params.general.mdlType == 1 || i_params.general.mdlType == 3
+            %% NPM or PM
+        
+%                 pattern = getHOXFeat( curImg, i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type );
+%                 patterns{dbobjInd} = pattern(:);
+                
+                patterns{dbobjInd} = getFeat( i_params, struct('featPyr', [], 'img', curImg), curMdl, [1; 1; 1; curMdl.c] );
+                labels{dbobjInd} = (1)*(curMdl.c==1) + (-1)*(curMdl.c==0);
 
-            pattern = getHOXFeat( curImg, i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type );
-            pattern = pattern(:);
+                if i_params.training.reflect == 1
+                    pattern = double(getHOXFeat(flipdim(im, 2), i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type));
+                    patterns_ref{dbobjInd} = pattern(:);
+                end
+                
             
-%             if i_params.feat.HOG.type == 5
-%                 pattern = pattern./norm(pattern)
-%             end
-
-            patterns{dbobjInd} = pattern;
-            labels{dbobjInd} = (1)*(curMdl.c==1) + (-1)*(curMdl.c==0);
-
-            if i_params.training.reflect == 1
-                pattern = double(getHOXFeat(flipdim(im, 2), i_params.feat.HoG.SqCellSize, i_params.feat.HOGType));
-                patterns_ref{dbobjInd} = pattern(:);
-            end
         else
             %% DPM
             
-            pattern = [];
-            pattern.featPyr = getFeatPyr( ...
-                curImg, ...
-                [1 i_params.feat.partResRatio], ...
-                @(img) getHOXFeat(img, i_params.feat.HoG.SqCellSize, i_params.feat.HoG.type));
+%             pattern = [];
+%             pattern.featPyr = getFeatPyr( ...
+%                 curImg, ...
+%                 [1 i_params.feat.partResRatio], ...
+%                 @(img) getHOXFeat(img, i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type));
+%             patterns{dbobjInd} = pattern;
 
-            patterns{dbobjInd} = pattern;
+            patterns{dbobjInd} = struct('featPyr', ...
+                struct(...
+                'scale', {1, i_params.feat.HOX.partResRatio}, ...
+                'feat', {getHOXFeat(curImg, i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type), getHOXFeat(curImg, i_params.feat.HOX.SqCellSize/i_params.feat.HOX.partResRatio, i_params.feat.HOX.type)}));
             labels{dbobjInd} = updMdlW(squeezeMdl(curMdl), zeros(objMdl.featDim, 1));
+                
         end
 
         bPosInd(dbobjInd) = curMdl.c == 1;
@@ -185,7 +191,7 @@ end
 if i_params.debug.verbose >= 1
     fprintf('- training...\n');
 end
-if i_params.general.mdlType == 1
+if i_params.general.mdlType == 1 || i_params.general.mdlType == 3
     % train a linear SVM
 %     objMdl = trainSVMLight(i_params, patterns, labels, objMdl);
 %     objMdl = trainLinSVM(i_params, patterns, labels, objMdl);
@@ -344,7 +350,7 @@ end
 assert(~isempty(validObjInst));
 
 % update feat dim of mdl
-% o_objMdl.uv_cc = validObjInst.uv_cc;
+o_objMdl.uv_cc = validObjInst.uv_cc;
 o_objMdl.wh_cc = validObjInst.wh_cc;
 o_objMdl.appFeatDim = validObjInst.appFeatDim;
 o_objMdl.w_app = zeros(o_objMdl.appFeatDim, 1);
@@ -355,7 +361,7 @@ newParts = [];
 for pInd=1:numel(parts)
     newPart = parts(pInd);
     corrPart = validObjInst.parts(strcmp(newPart.class, {validObjInst.parts(:).class}));
-%     newPart.uv_cc = corrPart.uv_cc;
+    newPart.uv_cc = corrPart.uv_cc;
     newPart.wh_cc = corrPart.wh_cc;
     newPart.dudv_cc = corrPart.dudv_cc;
     
@@ -505,15 +511,17 @@ if all(i_params.feat.HOX.mdlWH == 0)
 else
     modelImgWH_pos = ceil(i_params.feat.HOX.mdlWH);
 end
-o_objMdl.wh = modelImgWH_pos(:);
 
-% % resize for convenience
-% if mod(o_objMdl.wh(1), i_params.feat.HOX.SqCellSize) ~= 0
-%     o_objMdl.wh(1) = o_objMdl.wh(1) + (i_params.feat.HOX.SqCellSize - mod(o_objMdl.wh(1), i_params.feat.HOX.SqCellSize));
-% end
-% if mod(o_objMdl.wh(2), i_params.feat.HOX.SqCellSize) ~= 0
-%     o_objMdl.wh(2) = o_objMdl.wh(2) + (i_params.feat.HOX.SqCellSize - mod(o_objMdl.wh(2), i_params.feat.HOX.SqCellSize));
-% end
+% resize for the convenience
+modelImgWH_pos = floor(modelImgWH_pos/i_params.feat.HOX.SqCellSize)*i_params.feat.HOX.SqCellSize;
+if mod(modelImgWH_pos(1)/i_params.feat.HOX.SqCellSize, 2) == 0
+    modelImgWH_pos(1) = modelImgWH_pos(1) - i_params.feat.HOX.SqCellSize;
+end
+if mod(modelImgWH_pos(2)/i_params.feat.HOX.SqCellSize, 2) == 0
+    modelImgWH_pos(2) = modelImgWH_pos(2) - i_params.feat.HOX.SqCellSize;
+end
+
+o_objMdl.wh = modelImgWH_pos(:);
 
 if i_params.debug.verbose >= 1
     fprintf('- model WH: (%d, %d)\n', o_objMdl.wh(1), o_objMdl.wh(2));
@@ -651,26 +659,7 @@ end
 scale = i_scale;
 bbImg = imcrop(paddedImg, [paddedBB.xmin paddedBB.ymin paddedBB.xmax-paddedBB.xmin paddedBB.ymax-paddedBB.ymin]);
 bbImg_scaled = imresize(bbImg, scale);
-o_alImg = im2double(imresize(bbImg_scaled, [pivotWHSize(2), pivotWHSize(1)]));
-
-% % transformlocational info.
-% x0y0 = [paddedBB.xmin; paddedBB.ymin];
-% o_obj.bndbox.xmin = (o_obj.bndbox.xmin - x0y0(1))*scale;
-% o_obj.bndbox.ymin = (o_obj.bndbox.ymin - x0y0(2))*scale;
-% o_obj.bndbox.xmax = (o_obj.bndbox.xmax - x0y0(1))*scale;
-% o_obj.bndbox.ymax = (o_obj.bndbox.ymax - x0y0(2))*scale;
-% 
-% for cInd=1:numel(o_obj.parts)
-%     children = o_obj.parts(cInd);
-% 
-%     children.bndbox.xmin = (children.bndbox.xmin - x0y0(1))*scale;
-%     children.bndbox.ymin = (children.bndbox.ymin - x0y0(2))*scale;
-%     children.bndbox.xmax = (children.bndbox.xmax - x0y0(1))*scale;
-%     children.bndbox.ymax = (children.bndbox.ymax - x0y0(2))*scale;
-% 
-%     o_obj.parts(cInd) = children;
-% end
-
+o_alImg = im2double(imresize(bbImg_scaled, [pivotWHSize(2), pivotWHSize(1)])); % trick since the cropped image is not exactly same with the model
 end
 
 
@@ -700,10 +689,11 @@ function [o_pasDB, o_objMdl] = getPartAnnotations(i_params, i_pasDB, i_objMdl)
 o_pasDB = i_pasDB;
 o_objMdl = i_objMdl;
 
-if i_params.training.activelearning == 0    
+if i_params.training.activelearning == 0 || i_params.general.mdlType == 1
     return;
 end
 
+%% annotate parts
 objCls = i_objMdl.class;
 switch i_params.training.activelearning
     case 1
@@ -726,10 +716,12 @@ switch i_params.training.activelearning
 
             polys = [polys; {ceil([x'; y'])}];
         end
+        save('annoPoly.mat', 'polys');
 %         warning('load tmp data');
 %         load('annoPoly.mat');
-
-    case 2 % choose parts for rectangular objects, like window
+    case 2
+        load('annoPoly.mat');
+    case 3 % choose parts for rectangular objects, like window
         aveImg = getAverageImg(i_params, i_pasDB, objCls, i_objMdl);
         figure(10005);
         imshow(aveImg);
@@ -739,7 +731,7 @@ switch i_params.training.activelearning
         wSize = size(aveImg, 2);
         hSize = size(aveImg, 1);
         partRatio = 0.30;
-        sqCellSize = i_params.feat.HoG.SqCellSize;
+        sqCellSize = i_params.feat.HOX.SqCellSize;
         partTmplt = [...
             1 1 wSize*partRatio wSize*partRatio;
             1 hSize*partRatio hSize*partRatio 1
@@ -765,7 +757,8 @@ switch i_params.training.activelearning
         end
 end
 
-% add parts to the model
+%% add parts to the model
+partCellSz = i_params.feat.HOX.SqCellSize/i_params.feat.HOX.partResRatio;
 o_objMdl.parts = [];
 o_objMdl.c = 1;
 for pInd=1:numel(polys)
@@ -774,69 +767,81 @@ for pInd=1:numel(polys)
     ymin = min(curPoly(2, :));
     xmax = max(curPoly(1, :));
     ymax = max(curPoly(2, :));
-    xmean = mean(curPoly(1, :));
-    ymean = mean(curPoly(2, :));
+%     xmean = mean(curPoly(1, :));
+%     ymean = mean(curPoly(2, :));
+    
+    % resize for the convenience
+    wh_part = [xmax-xmin+1; ymax-ymin+1];
+    wh_part = floor(wh_part/partCellSz)*partCellSz;
+    if mod(wh_part(1)/partCellSz, 2) == 0
+        wh_part(1) = wh_part(1) - partCellSz;
+    end
+    if mod(wh_part(2)/partCellSz, 2) == 0
+        wh_part(2) = wh_part(2) - partCellSz;
+    end
+%     xy_part = [xmin; ymin] + round(([xmax-xmin+1; ymax-ymin+1]-wh_part)/2);
+    xy_part = floor([xmin; ymin]/partCellSz)*partCellSz;
+    xymean = xy_part + round((wh_part-1)/2);
     
     children = initPart(...
         sprintf('part_%d', pInd), [], [], [], ...
         1, ...
-        [xmin; ymin], [], ...
-        [xmax-xmin; ymax-ymin], [], ...
+        xy_part, [], ...
+        wh_part, [], ...
         2, [], ...
-        [xmean; ymean], [], [], [], []);
-%     children = [];
-%     children.c = 1;
-%     children.uv = [xmin; ymin];
-%     children.wh = [xmax-xmin; ymax-ymin];
-%     children.ds = 2;
-%     children.dudv = [xmean; ymean];
-%     children.class =  sprintf('part_%d', pInd);
-%     children.parts = [];
+        xymean, [], [], [], []);
     
     o_objMdl.parts = [o_objMdl.parts; children];
 end
 
-% inversely trasnfer part labels and add to the objects structure
+%% inversely trasnfer part labels and add to the objects structure
 parfor dbInd=1:numel(o_pasDB)
+% for dbInd=1:numel(o_pasDB)
     % obj
     objs = o_pasDB(dbInd).objects;
-    posObjInd = find(strcmp(objCls, {objs(:).class}));
-    negObjInd = find(~strcmp(objCls, {objs(:).class}));
+    
     
     newObjs = [];
-    for poInd=posObjInd(:)'
-        newObj = invTransferPartLabels(i_params, polys, objs(poInd), objs(poInd).scale_psi, objs(poInd).resizedBB_psi);
+    for oInd=1:numel(objs)
+        newObj = invTransferPartLabels(i_params, polys, objs(oInd), objs(oInd).scale_psi, objs(oInd).resizedBB_psi);
         newObjs = [newObjs; newObj];
     end
+    o_pasDB(dbInd).objects = newObjs;
     
-    newObjs2 = [];
-    for noInd=negObjInd(:)'
-        newObj = objs(noInd);
-        newObj.parts = [];
-        for pInd=1:numel(o_objMdl.parts)
-            part = initPart(o_objMdl.parts(pInd).class, o_objMdl.parts(pInd).bndbox, 0, 0, 0, [0; 0], [0; 0], [0; 0], [0; 0], o_objMdl.parts(pInd).ds, 0, [0; 0], [], [], [], []);
-%             part = [];
-%             part.c = 0;
-%             part.class = o_objMdl.parts(pInd).class;
-%             part.ds = o_objMdl.parts(pInd).ds;
-%             part.parts = [];
-            
-            newObj.parts = [newObj.parts; part];
-        end
-        newObjs2 = [newObjs2; newObj];
-    end
     
-    o_pasDB(dbInd).objects = [newObjs; newObjs2];
+%     posObjInd = find(strcmp(objCls, {objs(:).class}));
+%     negObjInd = find(~strcmp(objCls, {objs(:).class}));
+%     
+%     newObjs = [];
+%     for poInd=posObjInd(:)'
+%         newObj = invTransferPartLabels(i_params, polys, objs(poInd), objs(poInd).scale_psi, objs(poInd).resizedBB_psi);
+%         newObjs = [newObjs; newObj];
+%     end
+%     
+%     newObjs2 = [];
+%     for noInd=negObjInd(:)'
+%         newObj = objs(noInd);
+%         newObj.parts = [];
+%         for pInd=1:numel(o_objMdl.parts)
+%             part = initPart(...
+%                 o_objMdl.parts(pInd).class, o_objMdl.parts(pInd).bndbox, 0, 0, 0, [0; 0], [0; 0], [0; 0], [0; 0], o_objMdl.parts(pInd).ds, 0, [0; 0], [], [], [], []);
+%             newObj.parts = [newObj.parts; part];
+%         end
+%         newObjs2 = [newObjs2; newObj];
+%     end
+%     
+%     o_pasDB(dbInd).objects = [newObjs; newObjs2];
+    
+    
     
 %     sfigure(10006);
 %     showLabels(i_params, o_pasDB(dbInd));
 end
 
-% add part labels
+%% add part labels
 parfor dbInd=1:numel(o_pasDB)
-    posObjInd = find(strcmp(objCls, {o_pasDB(dbInd).objects(:).class}));
-    for oInd=posObjInd(:)'
-        
+    for oInd=1:numel(o_pasDB(dbInd).objects)
+        c = strcmp(objCls, o_pasDB(dbInd).objects(oInd).class);
         newParts = [];
         for pInd=1:numel(o_pasDB(dbInd).objects(oInd).parts)
             objMdlPartsInd = find(strcmp(o_pasDB(dbInd).objects(oInd).parts(pInd).class, {o_objMdl.parts(:).class}));
@@ -847,7 +852,7 @@ parfor dbInd=1:numel(o_pasDB)
                 o_pasDB(dbInd).objects(oInd).parts(pInd).bndbox, ...
                 [], ...
                 [], ...
-                1, ...
+                c, ...
                 o_objMdl.parts(objMdlPartsInd).uv, ...
                 [], ...
                 o_objMdl.parts(objMdlPartsInd).wh, ...
@@ -860,16 +865,42 @@ parfor dbInd=1:numel(o_pasDB)
                 [], ...
                 []);
             newParts = [newParts; newPart];
-            
-%             o_pasDB(dbInd).objects(oInd).parts(pInd).c = 1;
-%             o_pasDB(dbInd).objects(oInd).parts(pInd).uv = o_objMdl.parts(objMdlPartsInd).uv;
-%             o_pasDB(dbInd).objects(oInd).parts(pInd).wh = o_objMdl.parts(objMdlPartsInd).wh;
-%             o_pasDB(dbInd).objects(oInd).parts(pInd).ds = o_objMdl.parts(objMdlPartsInd).ds;
-%             o_pasDB(dbInd).objects(oInd).parts(pInd).dudv = o_objMdl.parts(objMdlPartsInd).dudv;
         end
         o_pasDB(dbInd).objects(oInd).parts = newParts;
     end
 end
+
+% parfor dbInd=1:numel(o_pasDB)
+%     posObjInd = find(strcmp(objCls, {o_pasDB(dbInd).objects(:).class}));
+%     for oInd=posObjInd(:)'
+%         
+%         newParts = [];
+%         for pInd=1:numel(o_pasDB(dbInd).objects(oInd).parts)
+%             objMdlPartsInd = find(strcmp(o_pasDB(dbInd).objects(oInd).parts(pInd).class, {o_objMdl.parts(:).class}));
+%             
+%             newPart = ...
+%                 initPart(...
+%                 o_pasDB(dbInd).objects(oInd).parts(pInd).class,...
+%                 o_pasDB(dbInd).objects(oInd).parts(pInd).bndbox, ...
+%                 [], ...
+%                 [], ...
+%                 1, ...
+%                 o_objMdl.parts(objMdlPartsInd).uv, ...
+%                 [], ...
+%                 o_objMdl.parts(objMdlPartsInd).wh, ...
+%                 [], ...
+%                 o_objMdl.parts(objMdlPartsInd).ds, ...
+%                 [], ...
+%                 o_objMdl.parts(objMdlPartsInd).dudv, ...
+%                 [], ...
+%                 [], ...
+%                 [], ...
+%                 []);
+%             newParts = [newParts; newPart];
+%         end
+%         o_pasDB(dbInd).objects(oInd).parts = newParts;
+%     end
+% end
 
 end
 
@@ -1020,59 +1051,10 @@ parfor dbInd=1:numel(o_pasRec)
 end
 end
 
-function [o_objMdl] = convObjMdl_tmp(i_objMdl)
-
-parts = [];
-curParts_tree = {i_objMdl};
-while ~isempty(curParts_tree)
-    part = [];
-    
-    curPart_tree = curParts_tree{1};
-    part.c = double(curPart_tree.c);
-    part.uv = curPart_tree.uv;
-    part.uv_cc = curPart_tree.uv_cc;
-    part.wh = curPart_tree.wh;
-    part.wh_cc = curPart_tree.wh_cc;
-    part.ds = curPart_tree.ds;
-    part.s = curPart_tree.s;
-    part.dudv = curPart_tree.dudv;
-    part.dudv_cc = curPart_tree.dudv_cc;
-    part.appFeatDim = curPart_tree.appFeatDim;
-    part.defFeatDim = curPart_tree.defFeatDim;
-    part.appScore = curPart_tree.appScore;
-    part.defScore = curPart_tree.defScore;
-    part.w_app = curPart_tree.w_app;
-    if isfield(curPart_tree, 'w_def')
-        part.w_def = curPart_tree.w_def;
-    else
-        part.w_def = zeros(4, 1);
-    end
-    if isfield(curPart_tree, 'w_b')
-        part.w_b = curPart_tree.w_b;
-    else
-        part.w_b = 0;
-    end
-    
-    parts = [parts; part];
-    
-    curParts_tree(1) = [];
-    if ~isempty(curPart_tree.parts)
-        curParts_tree = [curParts_tree; mat2cell(curPart_tree.parts, ones(numel(curPart_tree.parts), 1), 1)];
-    end
-end
-parents = ones(numel(parts), 1);
-parents(1) = 0;
-%% return
-o_objMdl = [];
-% o_objMdl.featDim = i_objMdl.featDim;
-o_objMdl.parts = parts;
-o_objMdl.parents = parents;
-end
-
 
 function [o_mdl] = genMap_IDTI(i_mdl)
 
-nNode = 1 + numel(i_mdl.parts); % assume a shallow model
+nNode = 1 + numel(i_mdl.parts); %%FIXME: assume a shallow model
 nLevel = 2;
 
 map_IDTI = zeros(nLevel, nNode);

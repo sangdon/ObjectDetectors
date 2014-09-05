@@ -12,7 +12,8 @@ ssvmParams.verbose = 0;
 if i_params.debug.verbose >= 1
     ssvmTicID = tic;
 end
-model_ssvm = svm_struct_learn_Vedaldi(sprintf('-c %f -o 1 -v %d -w 4 -e %f', i_params.training.C, i_params.debug.verbose, i_params.training.tol), ssvmParams) ;
+% -t 2: radial basis kernel
+model_ssvm = svm_struct_learn_Vedaldi(sprintf('-c %f -o 2 -v %d -w 4 -e %f -t 0', i_params.training.C, i_params.debug.verbose, i_params.training.tol), ssvmParams);
 if i_params.debug.verbose >= 1
     fprintf('- running time of SSVM: %s sec.\n', num2str(toc(ssvmTicID)));
 end

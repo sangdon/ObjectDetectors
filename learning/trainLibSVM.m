@@ -10,7 +10,7 @@ nNeg = sum(training_label_vector == -1);
 if i_params.debug.verbose >= 1
     ssvmTicID = tic;
 end
-model = svmtrain(training_label_vector, training_instance_matrix, sprintf('-c %f t 0 -m 1000 -h 0 -w1 %f', i_params.training.C, nNeg/nPos));
+model = svmtrain(training_label_vector, training_instance_matrix, sprintf('-c %f -t 0 -m 1000 -h 0 -w1 %f', i_params.training.C, nNeg/nPos));
 if i_params.debug.verbose >= 1
     fprintf('- running time of libSVM: %s sec.\n', num2str(toc(ssvmTicID)));
 end
@@ -18,5 +18,7 @@ end
 
 %% return
 o_objMdl = i_objMdl;
-o_objMdl.w_app = (model.sv_coef' * full(model.SVs))';
+% o_objMdl.w_app = (model.sv_coef' * full(model.SVs))';
+o_objMdl = updMdlW(i_params.general.mdlType, o_objMdl, (model.sv_coef' * full(model.SVs))');
+
 end
