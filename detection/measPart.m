@@ -2,6 +2,8 @@ function [ o_score, o_mdl ] = measPart( i_sqCellSize, i_type, i_imgSt, i_mdl, i_
 %MEASOBJCLS Summary of this function goes here
 %   Detailed explanation goes here
 
+% warning('legacy!!');
+
 i_mdl = updMdlUVSC(i_mdl, i_uvsc);
 i_mdl.uv = i_uvsc(1:2)*i_sqCellSize; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% what is that??
 
@@ -16,7 +18,6 @@ score = score + appScore;
 defScore = 0;
 o_mdl.defScore = defScore;
 score = score + defScore;
-
 
 %% parts scores
 children = o_mdl.parts;
@@ -33,7 +34,7 @@ for cInd=1:numel(children)
 %         childMdl, ...
 %         childMdl.ds*[i_mdl.uv_cc; i_mdl.wh_cc]);
     % for Matlab coder
-    candiParts = slideWindow_part(i_sqCellSize, ...
+    candiParts = slideWindow_part(i_sqCellSize, i_type, ...
         i_imgSt, ...
         childMdl, ...
         childMdl.ds*[i_mdl.uv_cc; i_mdl.wh_cc]);
@@ -43,10 +44,11 @@ for cInd=1:numel(children)
     maxChild = childMdl; % for initialization
     for bInd=1:size(candiParts, 1) 
         
-        % deformation score
         curChildMdl = childMdl;
+        
+        % deformation score
         curChildMdl.uv_cc = reshape(candiParts(bInd, 1:2), [2 1]);
-        defScore = measDefScore(o_mdl, curChildMdl);
+        defScore = measDefScore(o_mdl, curChildMdl);        
         curChildMdl.defScore = defScore;
         
         % appearance score
@@ -90,7 +92,9 @@ if i_parentMdl.c == 0 % for efficienty
     o_score = 0;
 else
     defFeat = getDefFeat(i_parentMdl, i_childMdl);
-    o_score = defFeat'*i_childMdl.w_def;
+    o_score = -defFeat'*i_childMdl.w_def;
+%     o_score = defFeat'*i_childMdl.w_def; % sign: depending on the
+%     library...
 end
 end
 

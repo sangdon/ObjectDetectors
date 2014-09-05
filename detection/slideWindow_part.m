@@ -2,6 +2,8 @@
 function [o_bbs] = slideWindow_part(i_sqCellSize, i_type, i_imgSt, i_objMdl, i_valRectProp_cc)
 mdlCellWH = i_objMdl.wh_cc;
 
+% warning('legacy!!');
+
 % invalid featurepyramid level   
 level = findFeatPyrLevel(i_imgSt.featPyr,  i_objMdl.s);
 if level == 0
@@ -37,7 +39,7 @@ sPnts = [Xs(:)'; Ys(:)'];
 %% check the measurement of each candidates
 bbs = zeros(size(sPnts, 2), getNParts(i_objMdl)*6+1);
 % parfor
-parfor (spInd=1:size(sPnts, 2), 20)
+parfor (spInd=1:size(sPnts, 2), 32)
 
     % get the score of the model
     [score, curMdl] = measPart_part(...

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment-project plugin="plugin.matlabcoder" plugin-version="R2013a">
-  <configuration target="target.matlab.coder" target-name="MEX, C, and C++ Code Generation" name="slideWindow" location="/home/sangdonp/UPenn/Research/OD/detection" file="/home/sangdonp/UPenn/Research/OD/detection/slideWindow.prj" build-checksum="1904496369">
+  <configuration target="target.matlab.coder" target-name="MEX, C, and C++ Code Generation" name="slideWindow" location="/home/sangdonp/UPenn/Research/OD/detection" file="/home/sangdonp/UPenn/Research/OD/detection/slideWindow.prj" build-checksum="1628939618">
     <profile key="profile.mex">
       <param.MergeInstrumentationResults>false</param.MergeInstrumentationResults>
       <param.BuiltInstrumentedMex>false</param.BuiltInstrumentedMex>
@@ -376,8 +376,16 @@
       <param.DefaultFixedPointSignedness />
     </unset>
     <fileset.entrypoints>
-      <file value="${PROJECT_ROOT}/slideWindow.m" custom-data-expanded="true">
+      <file value="${PROJECT_ROOT}/slideWindow.m" custom-data-expanded="false">
         <Inputs fileName="slideWindow.m" functionName="slideWindow">
+          <Input Name="i_mdlType">
+            <Class>double</Class>
+            <Size>1 x 1</Size>
+            <Value />
+            <InitialValue />
+            <UserDefined>true</UserDefined>
+            <Complex>false</Complex>
+          </Input>
           <Input Name="i_sqCellSize">
             <Class>double</Class>
             <Size>1 x 1</Size>
@@ -786,7 +794,7 @@
               </Field>
               <Field Name="w_def">
                 <Class>double</Class>
-                <Size>4 x 1</Size>
+                <Size>:inf x 1</Size>
                 <Value />
                 <InitialValue />
                 <UserDefined>true</UserDefined>

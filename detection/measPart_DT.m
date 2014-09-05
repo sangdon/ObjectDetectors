@@ -1,4 +1,4 @@
-function [ o_score, o_mdl ] = measPart_DT( i_imgSt, i_mdl, i_uvsc ) 
+function [ o_score, o_mdl ] = measPart_DT( i_imgSt, i_mdl, i_uvsc ) %% FIXME: should be combined with slideWindow....computationally inefficient...
 %MEASOBJCLS Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -91,7 +91,7 @@ o_score = score;
 
 end
 
-function [ o_resp ] = getAppFilterResp( i_featPyr, i_mdl )
+function [ o_resp ] = getAppFilterResp( i_featPyr, i_mdl ) %% FIXME: old, check detect.m
 %GETAPPSPAFILTERRESP Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -135,28 +135,7 @@ end
 end
 
 
-function [o_node] = getNode(i_treeInd, i_tree)
-nDepth = numel(i_treeInd);
 
-curNode = i_tree;
-for d=1:nDepth
-    if i_treeInd(d) == 0
-        break;
-    else
-        curNode = curNode.parts(i_treeInd(d));
-    end
-    
-end
-o_node = curNode;
-end
 
-function [o_tree] = setNode(i_tree, i_treeInd, i_node)
-o_tree = i_tree;
 
-if i_treeInd(1) == 0
-    o_tree = i_node;
-else
-    o_tree.parts(i_treeInd(1)) = i_node;
-end
-end
 
