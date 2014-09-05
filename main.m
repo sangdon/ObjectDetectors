@@ -17,7 +17,7 @@ params = [];
 % general
 params.general.objCls = objCls;
 params.general.enableCaching = true;
-params.general.mdlType = 1; % 1: NPM, 2: DPM, 3: PM
+params.general.mdlType = 3; % 1: NPM, 2: DPM, 3: PM
 % libs
 params.lib.libDir = {...
     './feature', ...
@@ -46,7 +46,7 @@ params.feat.HOX.SqCellSize = 8;
 params.feat.HOX.mdlWH = [0 0]; % [64 128];
 params.feat.HOX.maxMdlImgArea = 100*50; % 64*128
 params.feat.HOX.type = 1; % 1: HOG_UOCTTI_vlfeat, 2: 1 wo CN, 3: wo AN, 4: HObC, 5: HObC_N0 ?: HOG_UOCTTI, 6: img, 7: HOG+Color
-params.feat.HOX.partResRatio = 2;
+params.feat.HOX.partResRatio = 2; % FIXME: featpyramid.m assumes 2. So, do not change it.
 params.feat.cachingDir = [resultDir expID '/' objCls '/cacheDir'];
 % training
 params.training.C = 1e3; % SVM: 1e12, SSVM: 1e12
@@ -58,7 +58,7 @@ params.training.reflect = 0;
 params.training.exampleDuplication = 0;
 params.training.padSize = 8; %%%% for INRIA, -16 or 0 with imgPadSz=16
 % test
-params.test.interval = 4;
+params.test.interval = 8;
 % params.test.scaleSearch = 0.2:0.1:0.4;
 params.test.bgContextSz = 0; % learningWH = realWH*(1+bgContextSz)
 params.test.scoreThres = -1000;
@@ -69,7 +69,7 @@ params.test.searchType = 1; % 1: exhuastive, 2: selective
 % evalutate
 params.eval.minOverlap = 0.5;
 % debugging options
-params.debug.verbose = 2;
+params.debug.verbose = 1;
 % results
 params.results.cachingDir = [resultDir expID '/' objCls '/cacheDir']; 
 params.results.detFigureDir = [resultDir expID '/' objCls '/detFigures']; 
