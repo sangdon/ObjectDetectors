@@ -2,11 +2,11 @@ function [o_pasDB_gt, o_pasDB_det] = test(i_params, i_objMdl, i_pasDB_test)
 
 %% find cahched results
 cacheFN = sprintf('%s/test.mat', i_params.results.cachingDir);
-warning('not load caches');
-% if i_params.general.enableCaching && exist(cacheFN, 'file') && i_params.training.hardNegMining == 0
-%     load(cacheFN);
-%     return;
-% end
+% warning('not load caches');
+if i_params.general.enableCaching && exist(cacheFN, 'file') && i_params.training.hardNegMining == 0
+    load(cacheFN);
+    return;
+end
 
 %% load db
 if isempty(i_pasDB_test)
@@ -16,7 +16,7 @@ else
 end
 
 % warning('small test');
-% pasDB_gt = pasDB_gt(1);
+% pasDB_gt = pasDB_gt(1:10);
 
 nTeDB = numel(pasDB_gt);
 pasDB_det = pasDB_gt;
@@ -57,7 +57,11 @@ for dbInd=1:nTeDB
     
     % detect
     if i_params.test.searchType == 1
-        [bbs, bbs_wbg] = detect(i_objMdl, img);
+        if i_params.general.mdlType == 2
+            [bbs, bbs_wbg] = detect(i_objMdl, img);
+        else
+            [bbs, bbs_wbg] = detect_PM(i_objMdl, img);
+        end
     else      
         [bbs, bbs_wbg] = detect_SS_py(i_params, img, i_objMdl, imgIDStr);
     end
@@ -76,12 +80,12 @@ for dbInd=1:nTeDB
 
     %% for visualization and evaluation
     if ~isempty(bbs)
-        maxScores(dbInd) = max(bbs(1:i_params.test.topN, end));
-        minScores(dbInd) = min(bbs(1:i_params.test.topN, end));
+        maxScores(dbInd) = max(bbs(1:min(size(bbs, 1), i_params.test.topN), end));
+        minScores(dbInd) = min(bbs(1:min(size(bbs, 1), i_params.test.topN), end));
     end
     
     pasDB_det(dbInd) = curPasRec;
-    pasDB_det(dbInd).objects = convBB2PVObjs(bbs, i_objMdl.class, bbs_wbg);
+    pasDB_det(dbInd).objects = convBB2PVObjs(bbs, i_objMdl.objMdl.class, bbs_wbg);
        
     if i_params.debug.verbose >= 2
         topBBs = bbs(1:min(size(bbs, 1), i_params.test.topN), :);
@@ -113,11 +117,15 @@ if i_params.debug.verbose >= 2
         curPasRec = pasDB_gt(dbInd);
         img = getPascalImg(i_params, curPasRec);
     
-        sfigure(10002); clf;
+        sfigure(20002); clf;
 %         showbbs(img, topBBs, 1, [], colormap(jet));
-        showbbs(img, topBBs, 0, [minScore maxScore], colormap(jet));
+        showbbs(img, topBBs, 5, 0, [minScore maxScore], colormap(jet));
+        if i_params.general.mdlType == 2
+            sfigure(20003); clf;
+            showbbs(img, topBBs, 5, 1, [minScore maxScore], colormap(jet));
+        end
         
-        saveas(10002, [i_params.results.detFigureDir '/' curPasRec.filename(1:end-4)], 'png');
+        saveas(20002, [i_params.results.detFigureDir '/' curPasRec.filename(1:end-4)], 'png');
     end
     
 end
