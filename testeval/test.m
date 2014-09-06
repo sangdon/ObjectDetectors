@@ -15,8 +15,8 @@ else
     pasDB_gt = i_pasDB_test;
 end
 
-% warning('small test');
-% pasDB_gt = pasDB_gt(1:10);
+warning('small test');
+pasDB_gt = pasDB_gt(1:10);
 
 nTeDB = numel(pasDB_gt);
 pasDB_det = pasDB_gt;
@@ -54,6 +54,13 @@ for dbInd=1:nTeDB
         testTicID = tic;
         fprintf('- test: %d/%d...', dbInd, nTeDB);
     end
+    
+%     % pad image
+%     sqCellSz = i_params.feat.HOX.SqCellSize;
+%     imSz = [size(img, 1), size(img, 2)];
+%     imSz_new = (floor(imSz/sqCellSz)+1)*sqCellSz;
+%     
+%     img = padarray(img, [imSz_new-imSz 0], 'symmetric', 'post');
     
     % detect
     if i_params.test.searchType == 1

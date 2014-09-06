@@ -17,7 +17,7 @@ params = [];
 % general
 params.general.objCls = objCls;
 params.general.enableCaching = true;
-params.general.mdlType = 3; % 1: NPM, 2: DPM, 3: PM
+params.general.mdlType = 2; % 1: NPM, 2: DPM, ?: PM
 % libs
 params.lib.libDir = {...
     './feature', ...
@@ -33,7 +33,7 @@ params.lib.libDir = {...
     genpath('~/UPenn/Research/VisionTools/vlfeat')};
 % db
 % params.db.rootDir = '~/UPenn/Dropbox/Research/SocialObject/trainImg_kids_VOC'; % pascal format
-params.db.rootDir = '/data/v50/sangdonp/objectDetection/DB/VOC_Caltech101'; % pascal format
+params.db.rootDir = '~/UPenn/Research/Data/DB/VOC_Caltech101'; % pascal format
 params.db.annDir = [params.db.rootDir '/Annotations']; % pascal format
 params.db.imgDir = [params.db.rootDir '/JPEGImages']; % pascal format
 params.db.imagesetDir = [params.db.rootDir '/ImageSets/Main']; % pascal format
@@ -49,8 +49,8 @@ params.feat.HOX.type = 1; % 1: HOG_UOCTTI_vlfeat, 2: 1 wo CN, 3: wo AN, 4: HObC,
 params.feat.HOX.partResRatio = 2; % FIXME: featpyramid.m assumes 2. So, do not change it.
 params.feat.cachingDir = [resultDir expID '/' objCls '/cacheDir'];
 % training
-params.training.C = 1e3; % SVM: 1e12, SSVM: 1e12
-params.training.tol = 0.1;
+params.training.C = 1e12; % SVM: 1e12, SSVM: 1e12
+params.training.tol = 0.001;
 params.training.nMaxNegPerImg = 5;
 params.training.hardNegMining = 0;
 params.training.activelearning = 2; % 1: annotate, 2: saved part, 3: canonical pose 

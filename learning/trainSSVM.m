@@ -57,13 +57,8 @@ o_loss = double(yi.c ~= y.c);
 end
 
 function psi = featureCB(param, x, y)
-
-    psi = sparse(getFeat(param.globalParams, x, y, [1; 1; 1; y.c]));
     
-%     if param.verbose
-%         fprintf('w = psi([%8.3f,%8.3f], %3d) = [%8.3f, %8.3f]\n', ...
-%             x, y, full(psi(1)), full(psi(2))) ;
-%     end
+psi = sparse(getFeat(param.globalParams, x, y, []));
 end
 
 
@@ -75,6 +70,9 @@ globalParams = param.globalParams;
 
 %% margin rescaling
 
+if sum(model.w) ~= 0
+    keyboard;
+end
 % update w
 y = updMdlW(globalParams.general.mdlType, yi, model.w);
 
@@ -86,7 +84,7 @@ for c=[0 1]
     
     loss = lossFnc(y, y_c);
 %     [meas, y_c_opt] = measPart( globalParams.feat.HOX.SqCellSize, globalParams.feat.HOX.type, xi, y_c, [1; 1; 1; c]);
-    [meas, y_c_opt] = measPart_DT( xi, y_c, [1; 1; 1; c]);
+    [meas, y_c_opt] = measPart_DT( xi, y_c, []);
         
     score = meas + loss; % wierd but correct based on svm_struct_api.c
     if maxScore < score

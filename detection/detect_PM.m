@@ -59,8 +59,95 @@ for sInd=1:numel(scales)
         curResp = resp{pnInd, psInd};
         
         xy_part_cc = bsxfun(@plus, partResolution*[x_cc y_cc] - 1, curObjMdl.uv_cc');
-        ind = sub2ind(size(curResp), xy_part_cc(:, 2), xy_part_cc(:, 1));
-        s = curResp(ind);
+        
+        %%FIXME: handle boundary errors
+        valInd = xy_part_cc(:, 1) <= size(curResp, 2) & xy_part_cc(:, 2) <= size(curResp, 1);
+        ind = sub2ind(size(curResp), xy_part_cc(valInd, 2), xy_part_cc(valInd, 1));
+        s = ones(size(xy_part_cc, 1), 1)*-inf;
+        s(valInd) = curResp(ind);
+        
+        xy_part_cc_max = xy_part_cc;
+        s_max = s;
+        for i=1:16 % perturb
+            switch i
+                case 1
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) - 1;
+                case 2
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) - 1;
+                case 3
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) - 1;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) - 1;
+                case 4
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) + 1;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) - 1;
+                case 5
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) - 1;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) + 1;
+                case 6
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) + 1;
+                case 7
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) + 1;
+                case 8
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) + 1;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) + 1;
+                case 9
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) - 2;
+                case 10
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) - 2;
+                case 11
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) - 2;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) - 2;
+                case 12
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) + 2;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) - 2;
+                case 13
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) - 2;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) + 2;
+                case 14
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) + 2;
+                case 15
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) + 2;
+                case 16
+                    xy_part_cc_var = xy_part_cc;
+                    xy_part_cc_var(:, 1) = xy_part_cc_var(:, 1) + 2;
+                    xy_part_cc_var(:, 2) = xy_part_cc_var(:, 2) + 2;
+                    
+            end
+            
+            %%FIXME: handle boundary errors
+            valInd = ...
+                xy_part_cc_var(:, 1) >= 1 & xy_part_cc_var(:, 1) <= size(curResp, 2) & ...
+                xy_part_cc_var(:, 2) >= 1 & xy_part_cc_var(:, 2) <= size(curResp, 1);
+            ind = sub2ind(size(curResp), xy_part_cc_var(valInd, 2), xy_part_cc_var(valInd, 1));
+            s_var = ones(size(xy_part_cc_var, 1), 1)*-inf;
+            s_var(valInd) = curResp(ind);
+            
+            % take max
+           [C, I] = max([s_max, s_var], [], 2);
+           s_max = C;
+           xy_part_cc_max(I == 2, :) = xy_part_cc_var(I == 2, :);
+            
+        end
+        
+        xy_part_cc = xy_part_cc_max;
+        s = s_max;
+        
+%         s = curResp(ind);
         curScaleBbs_cc{pnInd} = [xy_part_cc(:, 1) xy_part_cc(:, 2) xy_part_cc(:, 1)+curObjMdl.wh_cc(1)-1 xy_part_cc(:, 2)+curObjMdl.wh_cc(2)-1 s];
     end
     

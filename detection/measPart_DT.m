@@ -27,13 +27,17 @@ score = 0;
 % obtin scores for the parent
 rootPart = getNode(map_IDTI(:, 1), o_mdl);
 curLevel = ismember([featPyr(:).scale], rootPart.s);
-validResp = resp{1, curLevel}(...
-    1+round((rootPart.wh_cc(2)-1)/2):end-round((rootPart.wh_cc(2)-1)/2), ...
-    1+round((rootPart.wh_cc(1)-1)/2):end-round((rootPart.wh_cc(1)-1)/2));
+% validResp = resp{1, curLevel}(...
+%     1+round((rootPart.wh_cc(2)-1)/2):end-round((rootPart.wh_cc(2)-1)/2), ...
+%     1+round((rootPart.wh_cc(1)-1)/2):end-round((rootPart.wh_cc(1)-1)/2));
+validResp = resp{1, curLevel};
 [C, I] = max(validResp, [], 1);
 [resp_max, x_opt] = max(C, [], 2);
 y_opt = I(x_opt);
-cent_xy_opt = [x_opt; y_opt];
+xy_opt = [x_opt; y_opt];
+if validResp ~= 0
+    keyboard;
+end
 
 appScore = resp_max;
 score = score + appScore;
@@ -42,7 +46,7 @@ rootPart.appScore = appScore;
 rootPart.defScore = 0;
 
 % update a root location
-rootPart.uv_cc = cent_xy_opt; % round((rootPart.wh_cc-1)/2) - round((rootPart.wh_cc-1)/2)
+rootPart.uv_cc = xy_opt; % round((rootPart.wh_cc-1)/2) - round((rootPart.wh_cc-1)/2)
 
 % update the node
 o_mdl = setNode(o_mdl, map_IDTI(:, 1), rootPart);
@@ -60,16 +64,18 @@ for i=2:nAllParts
         score = -inf;
         break;
     end
-    validResp = resp{i, curLevel}(...
-        1+round((curPart.wh_cc(2)-1)/2):end-round((curPart.wh_cc(2)-1)/2), ...
-        1+round((curPart.wh_cc(1)-1)/2):end-round((curPart.wh_cc(1)-1)/2));
-    anchorPos_partcc = getAnchor( rootPart, curPart );
+%     validResp = resp{i, curLevel}(...
+%         1+round((curPart.wh_cc(2)-1)/2):end-round((curPart.wh_cc(2)-1)/2), ...
+%         1+round((curPart.wh_cc(1)-1)/2):end-round((curPart.wh_cc(1)-1)/2));
+    validResp = resp{i, curLevel};
+    anchorPos_part_cc = getAnchor( rootPart, curPart );
+    anchorPos_part_cc_fs = anchorPos_part_cc - (curPart.wh_cc-1)/2;
     [C, I] = max(validResp, [], 1);
     [resp_max, x_opt] = max(C, [], 2);
     y_opt = I(x_opt);
-    cent_xy_app_opt = [x_opt; y_opt];
+    xy_app_opt = [x_opt; y_opt];
     
-    curScore = resp_DT{i, curLevel}.score(anchorPos_partcc(2), anchorPos_partcc(1));
+    curScore = resp_DT{i, curLevel}.score(anchorPos_part_cc_fs(2), anchorPos_part_cc_fs(1));
     score = score + curScore;
     
     curPart.appScore = resp_max;
@@ -77,8 +83,8 @@ for i=2:nAllParts
 
     % update part locations
     curPart.uv_cc = double([...
-        resp_DT{i, curLevel}.Ix(anchorPos_partcc(2), anchorPos_partcc(1)); ...
-        resp_DT{i, curLevel}.Iy(anchorPos_partcc(2), anchorPos_partcc(1))]);
+        resp_DT{i, curLevel}.Ix(anchorPos_part_cc_fs(2), anchorPos_part_cc_fs(1)); ...
+        resp_DT{i, curLevel}.Iy(anchorPos_part_cc_fs(2), anchorPos_part_cc_fs(1))]);
     
     % update the node
     o_mdl = setNode(o_mdl, map_IDTI(:, i), curPart);
@@ -103,12 +109,12 @@ o_resp = cell(nAllParts, nFeatLevel);
 for i=1:nAllParts
     curMdl = getNode(map_IDTI(:, i), i_mdl);
     filterSize = [curMdl.wh_cc(2) curMdl.wh_cc(1) curMdl.appFeatDim/prod(curMdl.wh_cc)];
-    curFilter = reshape(curMdl.w_app, filterSize);
+    curFilter = reshape(curMdl.w_app, filterSize); %% FIXME: inefficient
     
     for l=1:nFeatLevel  
         % get responses
-        resp = convn(i_featPyr(l).feat, curFilter, 'same');
-        o_resp{i, l} = resp(:, :, 1+round((size(resp, 3)-1)/2));
+        o_resp{i, l} = convn(i_featPyr(l).feat, curFilter, 'valid');
+%         o_resp{i, l} = resp(:, :, 1+round((size(resp, 3)-1)/2));
     end
 end
 end

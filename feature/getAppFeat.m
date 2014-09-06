@@ -41,11 +41,13 @@ else
 %     end
     
     rect = [i_mdl.uv_cc' i_mdl.wh_cc'];
-    offset_s = min(rect(1:2) - [1 1], [0 0]);
-    rect(1:2) = rect(1:2) - offset_s;
-    ePnt = rect(1:2) + rect(3:4) - 1;
-    offset_e = max(ePnt - [size(feat, 2) size(feat, 1)], [0 0]);
-    rect(1:2) = rect(1:2) - offset_e;
+%     offset_s = min(rect(1:2) - [1 1], [0 0]);
+%     rect(1:2) = rect(1:2) - offset_s;
+%     ePnt = rect(1:2) + rect(3:4) - 1;
+%     offset_e = max(ePnt - [size(feat, 2) size(feat, 1)], [0 0]);
+%     rect(1:2) = rect(1:2) - offset_e;
+    
+    
     
     o_feat = crop3dmat(feat, rect);
 end
