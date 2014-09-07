@@ -65,7 +65,8 @@ for dbInd=1:nTeDB
     % detect
     if i_params.test.searchType == 1
         if i_params.general.mdlType == 2
-            [bbs, bbs_wbg] = detect(i_objMdl, img);
+%             [bbs, bbs_wbg] = detect(i_objMdl, img);
+            [bbs, bbs_wbg] = detect_DPM(i_objMdl, img);
         else
             [bbs, bbs_wbg] = detect_PM(i_objMdl, img);
         end
@@ -100,8 +101,8 @@ for dbInd=1:nTeDB
     end
 end
 
-maxScore = max(maxScores);
-minScore = min(minScores);
+maxScore = max(maxScores) + eps;
+minScore = min(minScores) - eps;
 
 if i_params.debug.verbose >= 1
     fprintf('* total test time: %s sec.\n', num2str(toc(testTID)));
@@ -111,10 +112,10 @@ end
 o_pasDB_gt = pasDB_gt;
 o_pasDB_det = pasDB_det;
 
-% warning('no save')
-if i_params.general.enableCaching
-    save(cacheFN, 'o_pasDB_gt', 'o_pasDB_det');
-end
+warning('no save')
+% if i_params.general.enableCaching
+%     save(cacheFN, 'o_pasDB_gt', 'o_pasDB_det');
+% end
 
 %% show results
 if i_params.debug.verbose >= 2
@@ -126,10 +127,10 @@ if i_params.debug.verbose >= 2
     
         sfigure(20002); clf;
 %         showbbs(img, topBBs, 1, [], colormap(jet));
-        showbbs(img, topBBs, 5, 0, [minScore maxScore], colormap(jet));
+        showbbs(img, topBBs, i_params.test.topN, 0, [minScore maxScore], colormap(jet));
         if i_params.general.mdlType == 2
             sfigure(20003); clf;
-            showbbs(img, topBBs, 5, 1, [minScore maxScore], colormap(jet));
+            showbbs(img, topBBs, i_params.test.topN, 1, [minScore maxScore], colormap(jet));
         end
         
         saveas(20002, [i_params.results.detFigureDir '/' curPasRec.filename(1:end-4)], 'png');

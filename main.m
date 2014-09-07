@@ -29,7 +29,7 @@ params.lib.libDir = {...
     '~/UPenn/Research/VisionTools/libMatlabHelper', ...
     '~/UPenn/Research/VisionTools/PVOC', ...
     genpath('~/UPenn/Research/VisionTools/libsvm'), ...
-    genpath('~/UPenn/Research/VisionTools/libSSVM'), ...
+    genpath('~/UPenn/Research/VisionTools/svm-struct'), ...
     genpath('~/UPenn/Research/VisionTools/vlfeat')};
 % db
 % params.db.rootDir = '~/UPenn/Dropbox/Research/SocialObject/trainImg_kids_VOC'; % pascal format
@@ -62,14 +62,14 @@ params.test.interval = 8;
 % params.test.scaleSearch = 0.2:0.1:0.4;
 params.test.bgContextSz = 0; % learningWH = realWH*(1+bgContextSz)
 params.test.scoreThres = -1000;
-params.test.topN = 50;
+params.test.topN = 1;
 params.test.nms = 1;
 params.test.nmsOverlap = 0.5;
 params.test.searchType = 1; % 1: exhuastive, 2: selective
 % evalutate
 params.eval.minOverlap = 0.5;
 % debugging options
-params.debug.verbose = 1;
+params.debug.verbose = 2;
 % results
 params.results.cachingDir = [resultDir expID '/' objCls '/cacheDir']; 
 params.results.detFigureDir = [resultDir expID '/' objCls '/detFigures']; 
@@ -80,7 +80,7 @@ params.results.intResDir = [resultDir expID '/' objCls '/intResDir'];
 %% initialize
 close all;
 
-rng(1);   
+% rng(1);   
 
 assert(~(train_inria == 1 && params.training.reflect == 1))
 
@@ -120,6 +120,7 @@ if train_inria == 1
 else
     objMdl = train(params, objCls, []);
 end
+
 
 %% test
 [pasDB_gt, pasDB_det] = test(params, objMdl, []);

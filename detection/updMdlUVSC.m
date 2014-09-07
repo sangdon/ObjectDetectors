@@ -1,14 +1,17 @@
-function [ o_mdl ] = updMdlUVSC( i_mdl, i_uvsc )
+function [ o_mdl ] = updMdlUVSC( i_mdl, i_uv, i_s, i_c )
 %UPDMDLUVSC Summary of this function goes here
 %   Detailed explanation goes here
 o_mdl = i_mdl;
-if isempty(i_uvsc)
-    return;
-end
 
-o_mdl = updMdlUV(o_mdl, i_uvsc(1:2));
-o_mdl = updMdlS(o_mdl, i_uvsc(3));
-o_mdl = updMdlC(o_mdl, i_uvsc(4));
+if ~isempty(i_uv)
+    o_mdl = updMdlUV(o_mdl, i_uv);
+end
+if ~isempty(i_s)
+    o_mdl = updMdlS(o_mdl, i_s);
+end
+if ~isempty(i_c)
+    o_mdl = updMdlC(o_mdl, i_c);
+end
 
 end
 

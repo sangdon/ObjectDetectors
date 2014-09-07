@@ -6,10 +6,10 @@ function [ o_score, o_mdl ] = measPart_DT( i_imgSt, i_mdl, i_uvsc ) %% FIXME: sh
 
 i_mdl = updMdlUVSC(i_mdl, i_uvsc);
 o_mdl = i_mdl;
-if o_mdl.c == 0
-    o_score = 0; %%FIXME: correct way?
-    return;
-end
+% if o_mdl.c == 0
+%     o_score = 0; %%FIXME: correct way?
+%     return;
+% end
     
 map_IDTI = o_mdl.map_IDTI;
 nAllParts = size(map_IDTI, 2);
@@ -19,7 +19,9 @@ featPyr = i_imgSt.featPyr;
 resp = getAppFilterResp(featPyr, o_mdl);
 
 %% apply generalized distance transform
-resp_DT = applyDT(resp, o_mdl);
+if nAllParts > 1
+    resp_DT = applyDT(resp, o_mdl);
+end
 
 %% obtain a score
 score = 0;
@@ -35,9 +37,9 @@ validResp = resp{1, curLevel};
 [resp_max, x_opt] = max(C, [], 2);
 y_opt = I(x_opt);
 xy_opt = [x_opt; y_opt];
-if validResp ~= 0
-    keyboard;
-end
+% if validResp ~= 0
+%     keyboard;
+% end
 
 appScore = resp_max;
 score = score + appScore;

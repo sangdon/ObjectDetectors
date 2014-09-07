@@ -69,8 +69,8 @@ oriPasDB = pasDB;
 % get align parameters for bounding boxes
 [pasDB, objMdl] = transObjsToMdlSpace(i_params, pasDB, objMdl);
 % obtain hyper-supervision
-warning('no part annotation');
-% [pasDB, objMdl] = getPartAnnotations(i_params, pasDB, objMdl);
+% warning('no part annotation');
+[pasDB, objMdl] = getPartAnnotations(i_params, pasDB, objMdl);
 % convert image coordinates to cell cooridnate for all parts
 objMdl = ic2ccAll(i_params, objMdl);
 % convert a tree data structure into a array data structure
@@ -78,6 +78,8 @@ objMdl = genMap_IDTI(objMdl);
 % check feature dim to gather information
 % [pasDB, objMdl] = getFeatDim(i_params, pasDB, objMdl);
 objMdl = getFeatDim(i_params, pasDB, objMdl);
+% update db info
+pasDB = updatePasDB(i_params, pasDB, objMdl);
 % check the total number of bbs for parfor
 [nTotBB, dbobjIndMap] = getTotalNumBB(pasDB);
 
@@ -110,9 +112,8 @@ else
         % get patterns and labels
         [curImg, curMdl] = getAlignedBBImg(...
             getPascalImg(i_params, pasDB(dbInd)), ...
-            objMdl, ...%pasDB(dbInd).objects(oInd), ...
-            objMdl.wh_cc*i_params.feat.HOX.SqCellSize, ...
             pasDB(dbInd).objects(oInd), ...
+            objMdl.wh_cc*i_params.feat.HOX.SqCellSize, ...
             pasDB(dbInd).objects(oInd).scale_psi, pasDB(dbInd).objects(oInd).resizedBB_psi);
 
         if i_params.general.mdlType == 1 || i_params.general.mdlType == 3
@@ -141,9 +142,7 @@ else
                 curMdl.parts(pInd).s = scales{2};
             end
             patterns{dbobjInd} = getFeat( i_params, imgSt, curMdl, [] );
-            
-            c = strcmp(curMdl.class, pasDB(dbInd).objects(oInd).class);
-            labels{dbobjInd} = (1)*(c==1) + (-1)*(c==0);
+            labels{dbobjInd} = (1)*(curMdl.c==1) + (-1)*(curMdl.c==0);
 
             if i_params.training.reflect == 1
                 pattern = double(getHOXFeat(flipdim(im, 2), i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type));
@@ -172,7 +171,7 @@ else
             scales = {1, i_params.feat.HOX.partResRatio};
             feats = {...
                 getHOXFeat(curImg, i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type), ...
-                getHOXFeat(curImg, i_params.feat.HOX.SqCellSize/i_params.feat.HOX.partResRatio, i_params.feat.HOX.type)};
+                getHOXFeat(imresize(curImg, i_params.feat.HOX.partResRatio), i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type)};
             imgSt = struct('featPyr', struct('scale', scales, 'feat', feats), 'img', []);
             % set curMdl uv_cc
             % set curMdl s
@@ -181,8 +180,11 @@ else
                 curMdl.parts(pInd).s = scales{2};
             end
             
-            patterns{dbobjInd} = imgSt;
-            labels{dbobjInd} = updMdlW(i_params.general.mdlType, squeezeMdl(curMdl), zeros(objMdl.featDim, 1));
+%             patterns{dbobjInd} = imgSt;
+%             labels{dbobjInd} = updMdlW(i_params.general.mdlType, squeezeMdl(curMdl), zeros(objMdl.featDim, 1));
+            
+            patterns{dbobjInd} = getFeat( i_params, imgSt, curMdl, [] ); 
+            labels{dbobjInd} = (1)*(curMdl.c==1) + (-1)*(curMdl.c==0);
             
         end
 
@@ -235,7 +237,8 @@ if i_params.general.mdlType == 1 || i_params.general.mdlType == 3
     objMdl = trainLibSVM(i_params, patterns, labels, objMdl);
 else
     % train a SSVM
-    objMdl = trainSSVM(i_params, patterns, labels, objMdl);
+%     objMdl = trainSSVM(i_params, patterns, labels, objMdl);
+    objMdl = trainLibSVM(i_params, patterns, labels, objMdl);
 end
 
 
@@ -456,6 +459,58 @@ end
 % 
 % end
 
+function [o_pasDB] = updatePasDB(i_params, i_pasDB, i_objMdl)
+sqCellSz = i_params.feat.HOX.SqCellSize;
+
+o_pasDB = num2cell(i_pasDB);
+for dbInd=1:numel(o_pasDB)
+    objs = o_pasDB{dbInd}.objects;
+    newObjs = [];
+    for oInd=1:numel(objs)
+        
+        newObj = objs(oInd);
+        newObj.c = strcmp(i_objMdl.class, newObj.class);
+        newObj.uv_cc = i_objMdl.uv_cc;
+        newObj.wh_cc = i_objMdl.wh_cc;
+        newObj.dudv_cc = i_objMdl.dudv_cc;
+        
+        newObj.appFeatDim = i_objMdl.appFeatDim;
+        newObj.w_app = zeros(newObj.appFeatDim, 1);
+        newObj.w_b = 0;
+        newObj.map_IDTI = i_objMdl.map_IDTI;
+        % parts
+        parts = newObj.parts;
+        newParts = [];
+        for pInd=1:numel(parts)
+            part = parts(pInd);
+            partMdl = i_objMdl.parts(strcmp(part.class, {i_objMdl.parts(:).class}));
+            
+            part.c = newObj.c;
+            if part.c
+                part.uv_cc = partMdl.uv_cc;
+            else
+                part.uv_cc = ic2cc(newObj.parts(pInd).uv, sqCellSz);
+            end
+            part.wh_cc = partMdl.wh_cc;
+            part.dudv_cc = partMdl.dudv_cc;
+            
+            part.appFeatDim = partMdl.appFeatDim;
+            part.w_app = zeros(part.appFeatDim, 1);
+            part.defFeatDim = partMdl.defFeatDim;
+            part.w_def = zeros(part.defFeatDim, 1);
+            part.w_b = 0;
+            
+            newParts = [newParts; part];
+        end
+        newObj.parts = newParts;
+        newObjs = [newObjs; newObj];
+    end
+    o_pasDB{dbInd}.objects = newObjs;
+end
+o_pasDB = cell2mat(o_pasDB);
+
+end
+
 function [o_objMdl] = getFeatDim(i_params, i_pasDB, i_objMdl)
 
 featDepth = [];
@@ -468,9 +523,8 @@ for dbInd=1:numel(i_pasDB)
         
         [alignedBbImg, ~] = getAlignedBBImg(...
             getPascalImg(i_params, curPasRec), ...
-            o_objMdl, ...
-            o_objMdl.wh, ...
             curPasRec.objects(oInd), ...
+            o_objMdl.wh, ...
             curPasRec.objects(oInd).scale_psi, curPasRec.objects(oInd).resizedBB_psi);
         
         tmpFeat = getHOXFeat(alignedBbImg, i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type);
@@ -701,7 +755,7 @@ for dbInd=1:numel(i_pasDB)
         obj = curPasRec.objects(oInd);
         if strcmp(i_objCls, curPasRec.objects(oInd).class)
             % positive
-            alignedBbImg = getAlignedBBImg(img, i_objMdl, i_objMdl.wh, obj, obj.scale_psi, obj.resizedBB_psi);
+            alignedBbImg = getAlignedBBImg(img, obj, i_objMdl.wh, obj.scale_psi, obj.resizedBB_psi);
 
             if isempty(aveImg_pos)
                 aveImg_pos = alignedBbImg;
@@ -717,14 +771,12 @@ o_aveImg = aveImg_pos./nAdded;
     
 end
 
-function [o_alImg, o_obj] = getAlignedBBImg(i_img, i_objMdl, i_wh, i_pascalObj, i_scale, i_paddedBB)
+function [o_alImg, o_obj] = getAlignedBBImg(i_img, i_pascalObj, i_wh, i_scale, i_paddedBB)
 % function [o_alImg, o_obj] = getAlignedBBImg(i_img, i_obj, i_objMdl, i_scale, i_paddedBB)
 pivotWHSize = i_wh;
 paddedImg = i_img;
 paddedBB = i_paddedBB;
-o_obj = i_objMdl;
-c = strcmp(i_pascalObj.class, i_objMdl.class);
-o_obj.c = c;
+o_obj = i_pascalObj;
 
 if paddedBB.xmin < 0
     padSize = abs(paddedBB.xmin);
@@ -859,16 +911,17 @@ for pInd=1:numel(polys)
     xmax = max(curPoly(1, :));
     ymax = max(curPoly(2, :));
     
-    xy_part = [xmin; ymin];
+    uv_part = [xmin; ymin];
     wh_part = [xmax-xmin+1; ymax-ymin+1];
-    xymean = xy_part + (wh_part-1)/2 - 1;
+%     xymean = uv_part + (wh_part-1)/2 - 1;
+    dudv_part = uv_part;
     children = initPart(...
         sprintf('part_%d', pInd), [], [], [], ...
         1, ...
-        xy_part, [], ...
+        uv_part, [], ...
         wh_part, [], ...
         2, [], ...
-        xymean, [], [], [], []);
+        dudv_part, [], [], [], []);
     
     o_objMdl.parts = [o_objMdl.parts; children];
 end
@@ -916,22 +969,64 @@ parfor dbInd=1:numel(o_pasDB)
 %     showLabels(i_params, o_pasDB(dbInd));
 end
 
-%% add part labels
-parfor dbInd=1:numel(o_pasDB)
+%% add part labels in the model space
+% parfor dbInd=1:numel(o_pasDB)
+for dbInd=1:numel(o_pasDB)
     for oInd=1:numel(o_pasDB(dbInd).objects)
         c = strcmp(objCls, o_pasDB(dbInd).objects(oInd).class);
         newParts = [];
         for pInd=1:numel(o_pasDB(dbInd).objects(oInd).parts)
             objMdlPartsInd = find(strcmp(o_pasDB(dbInd).objects(oInd).parts(pInd).class, {o_objMdl.parts(:).class}));
+            uv = o_objMdl.parts(objMdlPartsInd).uv;
             
+%             
+%             minDist = min(o_objMdl.wh)*0.1; %%FIXME: constant here!
+%             if c
+%                 % pos example
+%                 uv = o_objMdl.parts(objMdlPartsInd).uv;
+%                 
+% %                 % random purterbation
+% %                 us = max(1, uv(1) - minDist):uv(1) + minDist; % tmp
+% %                 uv(1) = us(randi(numel(us), 1));
+% %                 
+% %                 vs = max(1, uv(2) - minDist):uv(2) + minDist; % tmp
+% %                 uv(2) = vs(randi(numel(vs), 1));
+%             else
+%                 
+%                 % For neg examples, apply random deformation
+%                 us = o_objMdl.uv(1):o_objMdl.uv(1)+o_objMdl.wh(1)-1;
+%                 us_not = max(0, o_objMdl.parts(objMdlPartsInd).uv(1)-minDist):o_objMdl.parts(objMdlPartsInd).uv(1)+minDist;
+%                 us = setdiff(us, us_not);
+%                 
+%                 vs = o_objMdl.uv(2):o_objMdl.uv(2)+o_objMdl.wh(2)-1;
+%                 vs_not = o_objMdl.parts(objMdlPartsInd).uv(2)-minDist:o_objMdl.parts(objMdlPartsInd).uv(2)+minDist;
+%                 vs = setdiff(vs, vs_not);
+%                 
+%                 uv = [us(randi(numel(us), 1)); vs(randi(numel(vs), 1))];
+%                 
+%                 
+%                 warning('tmp code')
+%                 uv = o_objMdl.parts(objMdlPartsInd).uv - 5;
+%                 
+%                 
+%                 
+% %                 ubnd = [o_objMdl.uv(1) o_objMdl.uv(1)+o_objMdl.wh(1)-1];
+% %                 vbnd = [o_objMdl.uv(2) o_objMdl.uv(2)+o_objMdl.wh(2)-1];
+% %                 
+% %                 u_part_rnd = randi([ubnd(1) ubnd(2)-o_objMdl.parts(objMdlPartsInd).wh(1)], 1);
+% %                 v_part_rnd = randi([vbnd(1) vbnd(2)-o_objMdl.parts(objMdlPartsInd).wh(2)], 1);
+% %                 
+% %                 uv = [u_part_rnd; v_part_rnd];
+%             end
+        
             newPart = ...
                 initPart(...
                 o_pasDB(dbInd).objects(oInd).parts(pInd).class,...
-                o_pasDB(dbInd).objects(oInd).parts(pInd).bndbox, ...
+                [], ...o_pasDB(dbInd).objects(oInd).parts(pInd).bndbox, ...%%FIXME: inconsistent with uv
                 [], ...
                 [], ...
                 c, ...
-                o_objMdl.parts(objMdlPartsInd).uv, ...
+                uv, ...
                 [], ...
                 o_objMdl.parts(objMdlPartsInd).wh, ...
                 [], ...
