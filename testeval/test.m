@@ -2,7 +2,6 @@ function [o_pasDB_gt, o_pasDB_det] = test(i_params, i_objMdl, i_pasDB_test)
 
 %% find cahched results
 cacheFN = sprintf('%s/test.mat', i_params.results.cachingDir);
-% warning('not load caches');
 if i_params.general.enableCaching && exist(cacheFN, 'file') && i_params.training.hardNegMining == 0
     load(cacheFN);
     return;
@@ -15,8 +14,8 @@ else
     pasDB_gt = i_pasDB_test;
 end
 
-warning('small test');
-pasDB_gt = pasDB_gt(1:10);
+% warning('small test');
+% pasDB_gt = pasDB_gt(1:10);
 
 nTeDB = numel(pasDB_gt);
 pasDB_det = pasDB_gt;
@@ -29,28 +28,23 @@ maxScores = ones(nTeDB, 1)*(-inf);
 minScores = ones(nTeDB, 1)*(inf);
 topBbs_cell = cell(nTeDB, 1);
 
-% showInterval = 60;
+
 if i_params.debug.verbose >= 1
-%     showTic = tic;
     showInterval = round(nTeDB*0.1);
-else
-%     showTic = 0;
 end
-% show = false;
+
+
+% warning('no handling on resizing part labels caused by paddings');
 
 fprintf('- test %d images\n', nTeDB);
-
-warning('no handling on resizing part labels caused by paddings');
-
-% parfor dbInd=1:nTeDB
-for dbInd=1:nTeDB
+parfor dbInd=1:nTeDB
+% for dbInd=1:nTeDB
     
     curPasRec = pasDB_gt(dbInd);
     img = getPascalImg(i_params, curPasRec);  
+%     img = imresize(img, 2);
     [~, imgIDStr, ~] = fileparts(getPascalImgFFN( i_params, curPasRec ));
     if i_params.debug.verbose >= 1 && mod(dbInd-1, showInterval) == 0
-%     if i_params.debug.verbose >= 1 && toc(showTic)>showInterval
-%         show = true;
         testTicID = tic;
         fprintf('- test: %d/%d...', dbInd, nTeDB);
     end
@@ -61,6 +55,7 @@ for dbInd=1:nTeDB
 %     imSz_new = (floor(imSz/sqCellSz)+1)*sqCellSz;
 %     
 %     img = padarray(img, [imSz_new-imSz 0], 'symmetric', 'post');
+    
     
     % detect
     if i_params.test.searchType == 1
@@ -74,11 +69,8 @@ for dbInd=1:nTeDB
         [bbs, bbs_wbg] = detect_SS_py(i_params, img, i_objMdl, imgIDStr);
     end
     
-%     if i_params.debug.verbose >= 1 && show
     if i_params.debug.verbose >= 1 && mod(dbInd-1, showInterval) == 0
         fprintf('%s sec.\n', num2str(toc(testTicID)));
-%         showTic = tic;
-%         show = false;
     end
     
     if isempty(bbs)

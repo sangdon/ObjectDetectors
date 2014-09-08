@@ -59,15 +59,15 @@ else
     end
 end
 
-warning('small number of training');
-pasDB = pasDB(1:10);
+% warning('small number of training');
+% pasDB = pasDB(1:10);
 oriPasDB = pasDB;
 
 
 %% initialize
 [pasDB, objMdl] = initParts(pasDB, i_objCls);
 % get align parameters for bounding boxes
-[pasDB, objMdl] = transObjsToMdlSpace(i_params, pasDB, objMdl);
+[pasDB, objMdl] = transObjsToMdlSpace(i_params, pasDB, objMdl, 1);
 % obtain hyper-supervision
 % warning('no part annotation');
 [pasDB, objMdl] = getPartAnnotations(i_params, pasDB, objMdl);
@@ -98,8 +98,8 @@ else
         showInterval = size(dbobjIndMap, 2)*0.1;
     end
     
-%     parfor dbobjInd=1:size(dbobjIndMap, 2)
-    for dbobjInd=1:size(dbobjIndMap, 2)
+    parfor dbobjInd=1:size(dbobjIndMap, 2)
+%     for dbobjInd=1:size(dbobjIndMap, 2)
         if i_params.debug.verbose >= 1 %&& mod(dbobjInd-1, showInterval) == 0
             fprintf('- extract features: %d/%d...', dbobjInd, size(dbobjIndMap, 2));
             feTID = tic;
@@ -168,6 +168,7 @@ else
 %             labels{dbobjInd} = updMdlW(squeezeMdl(curMdl), zeros(objMdl.featDim, 1));
             
             
+            % two-level  %%FIXME: multi-level
             scales = {1, i_params.feat.HOX.partResRatio};
             feats = {...
                 getHOXFeat(curImg, i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type), ...
@@ -232,13 +233,10 @@ if i_params.debug.verbose >= 1
 end
 if i_params.general.mdlType == 1 || i_params.general.mdlType == 3
     % train a linear SVM
-%     objMdl = trainSVMLight(i_params, patterns, labels, objMdl);
-%     objMdl = trainLinSVM(i_params, patterns, labels, objMdl);
     objMdl = trainLibSVM(i_params, patterns, labels, objMdl);
 else
     % train a SSVM
     objMdl = trainSSVM(i_params, patterns, labels, objMdl);
-%     objMdl = trainLibSVM(i_params, patterns, labels, objMdl);
 end
 
 
@@ -525,7 +523,7 @@ for dbInd=1:numel(i_pasDB)
         [alignedBbImg, ~] = getAlignedBBImg(...
             getPascalImg(i_params, curPasRec), ...
             curPasRec.objects(oInd), ...
-            o_objMdl.wh, ...
+            o_objMdl.wh_cc*i_params.feat.HOX.SqCellSize, ...
             curPasRec.objects(oInd).scale_psi, curPasRec.objects(oInd).resizedBB_psi);
         
         tmpFeat = getHOXFeat(alignedBbImg, i_params.feat.HOX.SqCellSize, i_params.feat.HOX.type);
@@ -564,7 +562,7 @@ o_objMdl.featDim = featDim;
 end
 
 
-function [o_pasDB, o_objMdl] = transObjsToMdlSpace(i_params, i_pasDB, i_objMdl)
+function [o_pasDB, o_objMdl] = transObjsToMdlSpace(i_params, i_pasDB, i_objMdl, i_mdlWHScale)
 % function [o_bbScales, o_paddedBBs, o_objMdl] = alignBBImgByCenter(i_params, i_pasDB, i_objCls, i_objMdl)
 % align BB images by their centers
 % add c, u, v, w, h, ds, du, dv to objects
@@ -665,6 +663,11 @@ end
 %     modelImgWH_pos(2) = modelImgWH_pos(2) - i_params.feat.HOX.SqCellSize;
 % end
 
+% %% rescale model image wh
+% modelImgWH_pos = round(modelImgWH_pos*i_mdlWHScale);
+% maxArea = prod(modelImgWH_pos);
+
+%% save
 o_objMdl.wh = modelImgWH_pos(:);
 o_objMdl.uv = [1; 1]; %%FIXME: constant!!
 

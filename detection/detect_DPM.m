@@ -24,7 +24,9 @@ if interval == 0
     feats = {getHOXFeat(img, sqCellSz, HOGType)};
     scales = 1;
 else
-    [feats, scales] = featpyramid(img, sqCellSz, interval, @(img) getHOXFeat(img, sqCellSz, HOGType));
+    img_rz = imresize(img, 2); %%FIXME: artifical rescaling
+    [feats, scales] = featpyramid(img_rz, sqCellSz, interval, @(img) getHOXFeat(img, sqCellSz, HOGType));
+    scales = scales*2;
 end
 featPyr = struct('scale', [mat2cell(scales, ones(numel(scales), 1), 1)], 'feat', feats);
 

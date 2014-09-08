@@ -17,7 +17,7 @@ params = [];
 % general
 params.general.objCls = objCls;
 params.general.enableCaching = true;
-params.general.mdlType = 2; % 1: NPM, 2: DPM, ?: PM
+params.general.mdlType = 2; % 1: NPM, 2: DPM
 % libs
 params.lib.libDir = {...
     './feature', ...
@@ -79,8 +79,6 @@ params.results.intResDir = [resultDir expID '/' objCls '/intResDir'];
 
 %% initialize
 close all;
-
-% rng(1);   
 
 assert(~(train_inria == 1 && params.training.reflect == 1))
 
