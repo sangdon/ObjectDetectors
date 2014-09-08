@@ -2,7 +2,7 @@ function [ o_feat ] = getAppFeat( i_sqCellSize, i_type, i_imgSt, i_mdl, i_uvsc )
 %GETFEATURE Summary of this function goes here
 %   Detailed explanation goes here
 
-i_mdl = updMdlUVSC( i_mdl, i_uvsc );
+% i_mdl = updMdlUVSC( i_mdl, i_uvsc(1:2), i_uvsc(3), i_uvsc(4) );
 
 % if i_mdl.c == 0
 %     o_feat = zeros([i_mdl.wh_cc(2) i_mdl.wh_cc(1) i_mdl.appFeatDim/prod(i_mdl.wh_cc)]);

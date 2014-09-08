@@ -88,8 +88,8 @@ for dbInd=1:nTeDB
 
     %% for visualization and evaluation
     if ~isempty(bbs)
-        maxScores(dbInd) = max(bbs(1:min(size(bbs, 1), i_params.test.topN), end));
-        minScores(dbInd) = min(bbs(1:min(size(bbs, 1), i_params.test.topN), end));
+        maxScores(dbInd) = max(bbs(:, end));
+        minScores(dbInd) = min(bbs(:, end));
     end
     
     pasDB_det(dbInd) = curPasRec;
@@ -128,12 +128,12 @@ if i_params.debug.verbose >= 2
         sfigure(20002); clf;
 %         showbbs(img, topBBs, 1, [], colormap(jet));
         showbbs(img, topBBs, i_params.test.topN, 0, [minScore maxScore], colormap(jet));
+        saveas(20002, [i_params.results.detFigureDir '/' curPasRec.filename(1:end-4)], 'png');
         if i_params.general.mdlType == 2
             sfigure(20003); clf;
             showbbs(img, topBBs, i_params.test.topN, 1, [minScore maxScore], colormap(jet));
+            saveas(20003, [i_params.results.detFigureDir '/' curPasRec.filename(1:end-4) '_parts' ], 'png');
         end
-        
-        saveas(20002, [i_params.results.detFigureDir '/' curPasRec.filename(1:end-4)], 'png');
     end
     
 end

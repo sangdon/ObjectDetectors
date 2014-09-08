@@ -175,16 +175,16 @@ else
             imgSt = struct('featPyr', struct('scale', scales, 'feat', feats), 'img', []);
             % set curMdl uv_cc
             % set curMdl s
-            curMdl.s = scales{1};
-            for pInd=1:numel(curMdl.parts)
-                curMdl.parts(pInd).s = scales{2};
-            end
+            curMdl = updMdlUVSC(curMdl, [], scales{1}, []);
+
+            patterns{dbobjInd} = imgSt;
+            labels{dbobjInd} = curMdl;
             
 %             patterns{dbobjInd} = imgSt;
 %             labels{dbobjInd} = updMdlW(i_params.general.mdlType, squeezeMdl(curMdl), zeros(objMdl.featDim, 1));
             
-            patterns{dbobjInd} = getFeat( i_params, imgSt, curMdl, [] ); 
-            labels{dbobjInd} = (1)*(curMdl.c==1) + (-1)*(curMdl.c==0);
+%             patterns{dbobjInd} = getFeat( i_params, imgSt, curMdl, [] ); 
+%             labels{dbobjInd} = (1)*(curMdl.c==1) + (-1)*(curMdl.c==0);
             
         end
 
@@ -237,8 +237,8 @@ if i_params.general.mdlType == 1 || i_params.general.mdlType == 3
     objMdl = trainLibSVM(i_params, patterns, labels, objMdl);
 else
     % train a SSVM
-%     objMdl = trainSSVM(i_params, patterns, labels, objMdl);
-    objMdl = trainLibSVM(i_params, patterns, labels, objMdl);
+    objMdl = trainSSVM(i_params, patterns, labels, objMdl);
+%     objMdl = trainLibSVM(i_params, patterns, labels, objMdl);
 end
 
 
@@ -486,11 +486,12 @@ for dbInd=1:numel(o_pasDB)
             partMdl = i_objMdl.parts(strcmp(part.class, {i_objMdl.parts(:).class}));
             
             part.c = newObj.c;
-            if part.c
-                part.uv_cc = partMdl.uv_cc;
-            else
-                part.uv_cc = ic2cc(newObj.parts(pInd).uv, sqCellSz);
-            end
+            part.uv_cc = partMdl.uv_cc;
+%             if part.c
+%                 part.uv_cc = partMdl.uv_cc;
+%             else
+%                 part.uv_cc = ic2cc(newObj.parts(pInd).uv, sqCellSz);
+%             end
             part.wh_cc = partMdl.wh_cc;
             part.dudv_cc = partMdl.dudv_cc;
             

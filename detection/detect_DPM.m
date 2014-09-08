@@ -1,8 +1,8 @@
 function [ o_bbs, o_bbs_wbg ] = detect_DPM( i_mdl, i_img  )
 %DETECT Summary of this function goes here
 %   Detailed explanation goes here
-warning('double img!');
-i_img = imresize(i_img, 2);
+% warning('double img!');
+% i_img = imresize(i_img, 2);
 
 img = i_img;
 objMdl = i_mdl.objMdl;
@@ -45,9 +45,11 @@ for sInd=1:numel(scales)
     curScale = scales(sInd);
     curPartScale = curScale*partResolution;
     % check available parts
-    psInd = ismember(scales, curPartScale);
-    if ~any(psInd)
-        continue;
+    if nAllParts > 1
+        psInd = ismember(scales, curPartScale);
+        if ~any(psInd)
+            continue;
+        end
     end
     
     % obtain bbs for a root and parts
@@ -149,7 +151,7 @@ o_bbs_cell{pnInd}(:, 1:4) = o_bbs_cell{pnInd}(:, 1:4)*i_sqCellSz/i_scale;
 
 % parts
 for pnInd=2:size(o_bbs_cell, 2)-1
-    pInd = pnInd - 1;
+%     pInd = pnInd - 1;
 %     o_bbs_cell{pnInd}(:, 1:4) = o_bbs_cell{pnInd}(:, 1:4)*i_sqCellSz/(i_scale*i_mdl.parts(pInd).ds);
     o_bbs_cell{pnInd}(:, 1:4) = o_bbs_cell{pnInd}(:, 1:4)*i_sqCellSz/(i_scale*i_partResolution);
 end
