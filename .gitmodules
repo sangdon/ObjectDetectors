@@ -10,3 +10,6 @@
 [submodule "externals/libPascalVOC"]
 	path = externals/libPascalVOC
 	url = https://github.com/sangdon/libPascalVOC
+[submodule "externals/libMatlabHelper"]
+	path = externals/libMatlabHelper
+	url = https://github.com/sangdon/libMatlabHelper

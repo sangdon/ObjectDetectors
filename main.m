@@ -33,8 +33,8 @@ params.lib.libDir = {...
 %     genpath('~/UPenn/Research/VisionTools/libSSVM'), ...
 %     genpath('~/UPenn/Research/VisionTools/vlfeat')};
 % db
-% params.db.rootDir = '~/UPenn/Dropbox/Research/SocialObject/trainImg_kids_VOC'; % pascal format
-params.db.rootDir = '~/UPenn/Research/Data/DB/VOC_Caltech101'; % pascal format
+
+params.db.rootDir = '~/UPenn/Research/Data/OD/DB/VOC_Caltech101'; % pascal format
 params.db.annDir = [params.db.rootDir '/Annotations']; % pascal format
 params.db.imgDir = [params.db.rootDir '/JPEGImages']; % pascal format
 params.db.imagesetDir = [params.db.rootDir '/ImageSets/Main']; % pascal format
