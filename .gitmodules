@@ -1,0 +1,9 @@
+[submodule "externals/libsvm"]
+	path = externals/libsvm
+	url = https://github.com/sangdon/libsvm
+[submodule "externals/svm-struct-matlab"]
+	path = externals/svm-struct-matlab
+	url = https://github.com/sangdon/svm-struct-matlab
+[submodule "externals/vlfeat"]
+	path = externals/vlfeat
+	url = https://github.com/sangdon/vlfeat

@@ -21,10 +21,11 @@ nAllParts = size(map_IDTI, 2);
 
 %% build a feature pyramid
 if interval == 0
-    feats = {getHOXFeat(img, sqCellSz, HOGType)};
-    scales = 1;
+    img_rz = imresize(img, partResolution); %%FIXME: artifical rescaling
+    feats = {getHOXFeat(img_rz, sqCellSz, HOGType); getHOXFeat(img, sqCellSz, HOGType)};
+    scales = [partResolution; 1];
 else
-    img_rz = imresize(img, 2); %%FIXME: artifical rescaling
+    img_rz = imresize(img, partResolution); %%FIXME: artifical rescaling
     [feats, scales] = featpyramid(img_rz, sqCellSz, interval, @(img) getHOXFeat(img, sqCellSz, HOGType));
     scales = scales*2;
 end
