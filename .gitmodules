@@ -10,3 +10,6 @@
 [submodule "externals/libMatlabHelper"]
 	path = externals/libMatlabHelper
 	url = https://github.com/sangdon/libMatlabHelper
+[submodule "externals/vlfeat-toobox"]
+	path = externals/vlfeat-toobox
+	url = https://github.com/sangdon/vlfeat-toolbox
