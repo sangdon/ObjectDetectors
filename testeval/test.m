@@ -59,12 +59,15 @@ parfor dbInd=1:nTeDB
     
     % detect
     if i_params.test.searchType == 1
-        if i_params.general.mdlType == 2
-%             [bbs, bbs_wbg] = detect(i_objMdl, img);
-            [bbs, bbs_wbg] = detect_DPM(i_objMdl, img);
-        else
-            [bbs, bbs_wbg] = detect_PM(i_objMdl, img);
-        end
+        
+        [bbs, bbs_wbg] = detect(i_objMdl, img);
+        
+%         if i_params.general.mdlType == 2
+% %             [bbs, bbs_wbg] = detect(i_objMdl, img);
+%             [bbs, bbs_wbg] = detect_DPM(i_objMdl, img);
+%         else
+%             [bbs, bbs_wbg] = detect_PM(i_objMdl, img);
+%         end
     else      
         [bbs, bbs_wbg] = detect_SS_py(i_params, img, i_objMdl, imgIDStr);
     end
